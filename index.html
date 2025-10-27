@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad Tracking Demo</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .section { height: 100vh; padding: 20px; text-align: center; }
-        #login { background: #f0f0f0; }
-        #landing { background: #e0e0e0; }
-        #shopping, #cart, #newsletter { background: #d0d0d0; }
-        a { margin: 10px; display: block; }
-        #logout { display: none; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
     <!-- Google Tag Manager -->
     <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
@@ -27,92 +19,96 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NEWID" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
-    <div id="login" class="section">
-        <h1>Login</h1>
-        <input type="text" id="username" placeholder="Username"><br>
-        <input type="password" id="password" placeholder="Password"><br>
-        <button onclick="login()">Login</button>
-        <button id="logout" onclick="logout()">Logout</button>
-    </div>
-
-    <div id="landing" class="section" style="display:none;">
-        <h1>Landing Page</h1>
-        <a href="#shopping">Go to Shopping Website</a>
-        <a href="#cart">Add to Cart & Purchase</a>
-        <a href="#newsletter">Subscribe to Newsletter</a>
+    <div id="landing" class="section">
+        <h1>This is the Demo Ecommerce Website</h1>
+        <h2>Welcome to the Landing Page</h2>
+        <nav>
+            <a href="#shopping">Go to Shopping Website</a>
+            <a href="#cart">Go to Cart & Purchase</a>
+            <a href="#newsletter">Subscribe to Newsletter</a>
+        </nav>
     </div>
 
     <div id="shopping" class="section" style="display:none;">
         <h1>Shopping Website</h1>
-        <p>Explore products here!</p>
+        <div class="item" data-id="001" onclick="addToCart('Oral-Zahnbürste', 5, '001')">Item 1: Oral-Zahnbürste (Price: $5)</div>
+        <div class="item" data-id="002" onclick="addToCart('Electric Razor', 15, '002')">Item 2: Electric Razor (Price: $15)</div>
+        <div class="item" data-id="003" onclick="addToCart('Hair Dryer', 10, '003')">Item 3: Hair Dryer (Price: $10)</div>
     </div>
 
     <div id="cart" class="section" style="display:none;">
         <h1>Cart & Purchase</h1>
-        <p>Item: Oral-Zahnbürste (Price: $5)</p>
-        <button onclick="purchase()">Complete Purchase</button>
+        <div id="cart-items"></div>
+        <input type="text" id="firstName" placeholder="First Name"><br>
+        <input type="text" id="lastName" placeholder="Last Name"><br>
+        <input type="text" id="country" placeholder="Country"><br>
+        <button id="purchase" onclick="purchase()">Complete Purchase</button>
     </div>
 
     <div id="newsletter" class="section" style="display:none;">
-        <h1>Newsletter Subscription</h1>
+        <h1>Subscribe to get more updates on promo codes and new events</h1>
         <input type="email" id="email" placeholder="Enter email"><br>
-        <button onclick="subscribe()">Subscribe</button>
+        <button id="subscribe" onclick="subscribe()">Subscribe</button>
+    </div>
+
+    <div id="thankyou" class="section" style="display:none;">
+        <h1>Thank You for Subscribing and Connecting with Us!</h1>
     </div>
 
     <script>
-        let loggedIn = false;
+        let cart = [];
 
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            if (username === 'user' && password === 'pass') {
-                loggedIn = true;
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('landing').style.display = 'block';
-                document.getElementById('logout').style.display = 'inline';
-            } else {
-                alert('Invalid credentials!');
-            }
+        function addToCart(name, price, id) {
+            cart.push({ name, price, id });
+            alert(`${name} added to cart!`);
+            document.getElementById('shopping').style.display = 'none';
+            document.getElementById('cart').style.display = 'block';
+            updateCartDisplay();
         }
 
-        function logout() {
-            loggedIn = false;
-            document.getElementById('landing').style.display = 'none';
-            document.getElementById('shopping').style.display = 'none';
-            document.getElementById('cart').style.display = 'none';
-            document.getElementById('newsletter').style.display = 'none';
-            document.getElementById('login').style.display = 'block';
-            document.getElementById('logout').style.display = 'none';
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = cart.map(item => `<p>${item.name} ($${item.price}) - ID: ${item.id}</p>`).join('');
         }
 
         function purchase() {
-            if (loggedIn) {
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({
-                    event: 'purchase',
-                    value: 5,
-                    currency: 'USD',
-                    items: [{ item_name: 'Oral-Zahnbürste', item_id: '002054TO', price: 5 }]
-                });
-                alert('Purchase completed!');
-                document.getElementById('cart').style.display = 'none';
-                document.getElementById('landing').style.display = 'block';
+            if (cart.length > 0) {
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const country = document.getElementById('country').value;
+                if (firstName && lastName && country) {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        event: 'purchase',
+                        value: cart.reduce((sum, item) => sum + item.price, 0),
+                        currency: 'USD',
+                        items: cart,
+                        firstName: firstName,
+                        lastName: lastName,
+                        country: country
+                    });
+                    alert('Purchase completed!');
+                    cart = [];
+                    document.getElementById('cart').style.display = 'none';
+                    document.getElementById('landing').style.display = 'block';
+                } else {
+                    alert('Please fill all fields!');
+                }
+            } else {
+                alert('Cart is empty!');
             }
         }
 
         function subscribe() {
-            if (loggedIn) {
-                const email = document.getElementById('email').value;
-                if (email) {
-                    window.dataLayer = window.dataLayer || [];
-                    window.dataLayer.push({
-                        event: 'newsletter_subscription',
-                        email: email
-                    });
-                    alert('Subscribed with: ' + email);
-                    document.getElementById('newsletter').style.display = 'none';
-                    document.getElementById('landing').style.display = 'block';
-                }
+            const email = document.getElementById('email').value;
+            if (email) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'newsletter_subscription',
+                    email: email
+                });
+                document.getElementById('newsletter').style.display = 'none';
+                document.getElementById('thankyou').style.display = 'block';
             }
         }
 
@@ -125,7 +121,7 @@
                 });
                 const section = this.getAttribute('href').substring(1);
                 document.getElementById(section).style.display = 'block';
-                document.getElementById('landing').style.display = 'none';
+                if (section !== 'landing') document.getElementById('landing').style.display = 'none';
             });
         });
     </script>
