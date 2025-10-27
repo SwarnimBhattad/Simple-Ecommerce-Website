@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Tracking Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .section { height: 100vh; padding: 20px; text-align: center; }
+        #login { background: #f0f0f0; }
+        #landing { background: #e0e0e0; }
+        #shopping, #cart, #newsletter { background: #d0d0d0; }
+        a { margin: 10px; display: block; }
+        #logout { display: none; }
+    </style>
+    <!-- Google Tag Manager -->
+    <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NEWID'); // Replace with your GTM ID
+    </script>
+    <!-- End Google Tag Manager -->
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NEWID" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="login" class="section">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Username"><br>
+        <input type="password" id="password" placeholder="Password"><br>
+        <button onclick="login()">Login</button>
+        <button id="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="landing" class="section" style="display:none;">
+        <h1>Landing Page</h1>
+        <a href="#shopping">Go to Shopping Website</a>
+        <a href="#cart">Add to Cart & Purchase</a>
+        <a href="#newsletter">Subscribe to Newsletter</a>
+    </div>
+
+    <div id="shopping" class="section" style="display:none;">
+        <h1>Shopping Website</h1>
+        <p>Explore products here!</p>
+    </div>
+
+    <div id="cart" class="section" style="display:none;">
+        <h1>Cart & Purchase</h1>
+        <p>Item: Oral-Zahnbürste (Price: $5)</p>
+        <button onclick="purchase()">Complete Purchase</button>
+    </div>
+
+    <div id="newsletter" class="section" style="display:none;">
+        <h1>Newsletter Subscription</h1>
+        <input type="email" id="email" placeholder="Enter email"><br>
+        <button onclick="subscribe()">Subscribe</button>
+    </div>
+
+    <script>
+        let loggedIn = false;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'user' && password === 'pass') {
+                loggedIn = true;
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('landing').style.display = 'block';
+                document.getElementById('logout').style.display = 'inline';
+            } else {
+                alert('Invalid credentials!');
+            }
+        }
+
+        function logout() {
+            loggedIn = false;
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('shopping').style.display = 'none';
+            document.getElementById('cart').style.display = 'none';
+            document.getElementById('newsletter').style.display = 'none';
+            document.getElementById('login').style.display = 'block';
+            document.getElementById('logout').style.display = 'none';
+        }
+
+        function purchase() {
+            if (loggedIn) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'purchase',
+                    value: 5,
+                    currency: 'USD',
+                    items: [{ item_name: 'Oral-Zahnbürste', item_id: '002054TO', price: 5 }]
+                });
+                alert('Purchase completed!');
+                document.getElementById('cart').style.display = 'none';
+                document.getElementById('landing').style.display = 'block';
+            }
+        }
+
+        function subscribe() {
+            if (loggedIn) {
+                const email = document.getElementById('email').value;
+                if (email) {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        event: 'newsletter_subscription',
+                        email: email
+                    });
+                    alert('Subscribed with: ' + email);
+                    document.getElementById('newsletter').style.display = 'none';
+                    document.getElementById('landing').style.display = 'block';
+                }
+            }
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                const section = this.getAttribute('href').substring(1);
+                document.getElementById(section).style.display = 'block';
+                document.getElementById('landing').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
