@@ -5,19 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad Tracking Demo</title>
     <link rel="stylesheet" href="styles.css">
-  <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-N8N8QH73');</script>
-<!-- End Google Tag Manager -->
+
+    <!-- Google Consent Mode (before GTM) -->
+    <script>
+      // Default consent: denied until user accepts
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted'
+      });
+    </script>
+    <!-- End Google Consent Mode -->
+
+    <!-- Google Tag Manager -->
+    <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NEWID'); // Replace with your GTM ID
+    </script>
+    <!-- End Google Tag Manager -->
 </head>
 <body>
-   <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8N8QH73"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NEWID" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background: #333; color: #fff; padding: 20px; text-align: center; z-index: 9999;">
+      <p style="margin: 0 0 10px;">We use cookies to analyze traffic and improve your experience. Accept cookies to enable tracking.</p>
+      <button id="accept-cookies" style="background: #4CAF50; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Accept</button>
+      <button id="reject-cookies" style="background: #999; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Reject</button>
+    </div>
+
+    <script>
+      document.getElementById('accept-cookies').addEventListener('click', function() {
+        gtag('consent', 'update', {
+          ad_storage: 'granted',
+          analytics_storage: 'granted',
+          functionality_storage: 'granted',
+          personalization_storage: 'granted'
+        });
+        document.getElementById('cookie-banner').style.display = 'none';
+        window.dataLayer.push({'event': 'cookie_consent_accepted'});
+      });
+
+      document.getElementById('reject-cookies').addEventListener('click', function() {
+        gtag('consent', 'update', {
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          functionality_storage: 'denied',
+          personalization_storage: 'denied'
+        });
+        document.getElementById('cookie-banner').style.display = 'none';
+        window.dataLayer.push({'event': 'cookie_consent_rejected'});
+      });
+    </script>
+    <!-- End Cookie Consent Banner -->
 
     <div id="landing" class="section">
         <h1 class="main-title">Ad Tracking Demo Ecommerce</h1>
@@ -83,11 +131,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script>
         let cart = [];
 
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+            // Show the selected one
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function navigateTo(sectionId) {
+            showSection(sectionId);
+            history.pushState({ section: sectionId }, '', '#' + sectionId);
+        }
+
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.section) {
+                showSection(event.state.section);
+            } else {
+                showSection('landing');
+            }
+        });
+
         function addToCart(name, price, id, brand, color, quantity) {
             cart.push({ name, price, id, brand, color, quantity });
             alert(`${name} added to cart!`);
-            document.getElementById('products').style.display = 'none';
-            document.getElementById('cart').style.display = 'block';
+            navigateTo('cart');
             updateCartDisplay();
         }
 
@@ -107,8 +174,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             cart = cart.filter(item => item.id !== id);
             updateCartDisplay();
             if (cart.length === 0) {
-                document.getElementById('cart').style.display = 'none';
-                document.getElementById('landing').style.display = 'block';
+                navigateTo('landing');
             }
         }
 
@@ -120,8 +186,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         function proceedToCheckout() {
             if (cart.length > 0) {
-                document.getElementById('cart').style.display = 'none';
-                document.getElementById('checkout').style.display = 'block';
+                navigateTo('checkout');
                 const checkoutItems = document.getElementById('checkout-items');
                 checkoutItems.innerHTML = cart.map(item => `
                     <p>${item.name} ($${item.price}) - Qty: ${item.quantity}</p>
@@ -148,8 +213,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
                 alert('Purchase completed!');
                 cart = [];
-                document.getElementById('checkout').style.display = 'none';
-                document.getElementById('thankyou').style.display = 'block';
+                navigateTo('thankyou');
             } else {
                 alert('Please fill all fields!');
             }
@@ -163,24 +227,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     event: 'newsletter_subscription',
                     email: email
                 });
-                document.getElementById('newsletter').style.display = 'none';
-                document.getElementById('thankyou').style.display = 'block';
+                navigateTo('thankyou');
             }
         }
 
-        // Smooth scrolling
+        // Smooth scrolling + navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
                 const section = this.getAttribute('href').substring(1);
-                document.getElementById(section).style.display = 'block';
-                if (section !== 'landing') document.getElementById('landing').style.display = 'none';
+                navigateTo(section);
             });
         });
+
+        // Initialize default section
+        showSection('landing');
+        history.replaceState({ section: 'landing' }, '', '#landing');
     </script>
 </body>
 </html>
-
