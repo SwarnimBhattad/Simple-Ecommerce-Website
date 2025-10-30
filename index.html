@@ -16,14 +16,14 @@
 
     <!-- ====================== gtag.js (GA4) ====================== -->
     <!-- REPLACE G-XXXXXXXXXX WITH YOUR GA4 MEASUREMENT ID -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-23GMWNMGG0"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
       // DEBUG MODE – REMOVE BEFORE PRODUCTION
-      gtag('config', 'G-XXXXXXXXXX', { debug_mode: true });
+      gtag('config', 'G-23GMWNMGG0', { debug_mode: true });
     </script>
 </head>
 <body>
@@ -118,13 +118,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <script>
-/* ==============================================================
+/* ============================================================== 
    GLOBAL STATE
    ============================================================== */
 const cart = [];
 const $ = id => document.getElementById(id);
 
-/* ==============================================================
+/* ============================================================== 
    NAVIGATION
    ============================================================== */
 function showSection(id){
@@ -140,225 +140,211 @@ window.addEventListener('popstate', e=>{
     const sec = e.state?.section || 'landing';
     showSection(sec);
 });
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener('click', e=>{
-        e.preventDefault();
-        navigateTo(a.getAttribute('href').slice(1));
-    });
-});
 
-/* ==============================================================
-   1. view_item_list – when product section is visible
+/* ============================================================== 
+   MAIN FUNCTIONAL LOGIC (runs after DOM is ready)
    ============================================================== */
-const productObserver = new IntersectionObserver(entries=>{
-    if(entries[0].isIntersecting){
-        const items = Array.from(document.querySelectorAll('.item-block')).map(el=>{
-            const p = JSON.parse(el.dataset.product);
-            return {
-                item_id: p.item_id,
-                item_name: p.item_name,
-                item_brand: p.item_brand,
-                item_category: p.item_category,
-                price: p.price,
-                quantity: 1
-            };
-        });
-
-        gtag('event', 'view_item_list', {
-            item_list_id: 'main_list',
-            item_list_name: 'Main Product List',
-            items
-        });
-
-        dataLayer.push({ event: 'view_item_list', ecommerce: { items } });
-        productObserver.unobserve(entries[0].target);
-    }
-}, { threshold: 0.3 });
-
 document.addEventListener('DOMContentLoaded', ()=>{
+
+    /* Navigation Links */
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+        a.addEventListener('click', e=>{
+            e.preventDefault();
+            navigateTo(a.getAttribute('href').slice(1));
+        });
+    });
+
+    /* 1. view_item_list – when product section is visible */
+    const productObserver = new IntersectionObserver(entries=>{
+        if(entries[0].isIntersecting){
+            const items = Array.from(document.querySelectorAll('.item-block')).map(el=>{
+                const p = JSON.parse(el.dataset.product);
+                return {
+                    item_id: p.item_id,
+                    item_name: p.item_name,
+                    item_brand: p.item_brand,
+                    item_category: p.item_category,
+                    price: p.price,
+                    quantity: 1
+                };
+            });
+
+            gtag('event', 'view_item_list', {
+                item_list_id: 'main_list',
+                item_list_name: 'Main Product List',
+                items
+            });
+
+            dataLayer.push({ event: 'view_item_list', ecommerce: { items } });
+            productObserver.unobserve(entries[0].target);
+        }
+    }, { threshold: 0.3 });
+
     const prod = $('#products');
     if(prod) productObserver.observe(prod);
-});
 
-/* ==============================================================
-   2. ADD TO CART
-   ============================================================== */
-document.querySelectorAll('.item-block').forEach(block=>{
-    block.addEventListener('click', ()=>{
-        const p = JSON.parse(block.dataset.product);
-        const existing = cart.find(i=>i.item_id===p.item_id);
-        const qty = existing ? existing.quantity + 1 : 1;
-        if(existing) existing.quantity = qty;
-        else cart.push({ ...p, quantity: qty });
+    /* 2. ADD TO CART */
+    document.querySelectorAll('.item-block').forEach(block=>{
+        block.addEventListener('click', ()=>{
+            const p = JSON.parse(block.dataset.product);
+            const existing = cart.find(i=>i.item_id===p.item_id);
+            const qty = existing ? existing.quantity + 1 : 1;
+            if(existing) existing.quantity = qty;
+            else cart.push({ ...p, quantity: qty });
 
-        const value = p.price * qty;
-        const items = [{ ...p, quantity: qty }];
+            const value = p.price * qty;
+            const items = [{ ...p, quantity: qty }];
 
-        gtag('event', 'add_to_cart', { currency: 'EUR', value, items });
-        dataLayer.push({ event: 'add_to_cart', ecommerce: { currency:'EUR', value, items } });
+            gtag('event', 'add_to_cart', { currency: 'EUR', value, items });
+            dataLayer.push({ event: 'add_to_cart', ecommerce: { currency:'EUR', value, items } });
 
-        updateCart();
-        navigateTo('cart');
+            updateCart();
+            navigateTo('cart');
+        });
     });
-});
 
-/* ==============================================================
-   3. CART DISPLAY + view_cart
-   ============================================================== */
-function updateCart(){
-    const container = $('#cart-items');
-    const totalEl = $('#total-amount');
-    const btn = $('#proceed-checkout');
+    /* 3. CART DISPLAY + view_cart */
+    function updateCart(){
+        const container = $('#cart-items');
+        const totalEl = $('#total-amount');
+        const btn = $('#proceed-checkout');
 
-    if(cart.length===0){
-        container.innerHTML = '<p class="placeholder">Cart is empty</p>';
-        $('#cart-total').style.display='none';
-        btn.style.display='none';
-        return;
+        if(cart.length===0){
+            container.innerHTML = '<p class="placeholder">Cart is empty</p>';
+            $('#cart-total').style.display='none';
+            btn.style.display='none';
+            return;
+        }
+
+        const total = cart.reduce((s,i)=>s + i.price*i.quantity,0);
+        totalEl.textContent = total.toFixed(2);
+        $('#checkout-total-amount').textContent = total.toFixed(2);
+        $('#cart-total').style.display='block';
+        btn.style.display='block';
+
+        container.innerHTML = cart.map(item=>`
+            <div class="cart-item">
+                <div>
+                    <h4>${item.item_name}</h4>
+                    <p>€${item.price.toFixed(2)} × ${item.quantity}</p>
+                </div>
+                <div>
+                    <input type="number" min="1" value="${item.quantity}"
+                           onchange="updateQty('${item.item_id}',this.value)">
+                    <button onclick="removeItem('${item.item_id}')">Remove</button>
+                </div>
+            </div>`).join('');
     }
 
-    const total = cart.reduce((s,i)=>s + i.price*i.quantity,0);
-    totalEl.textContent = total.toFixed(2);
-    $('#checkout-total-amount').textContent = total.toFixed(2);
-    $('#cart-total').style.display='block';
-    btn.style.display='block';
+    window.updateQty = (id, val)=>{
+        const item = cart.find(i=>i.item_id===id);
+        if(item) item.quantity = Math.max(1, parseInt(val)||1);
+        updateCart();
+    };
 
-    container.innerHTML = cart.map(item=>`
-        <div class="cart-item">
-            <div>
-                <h4>${item.item_name}</h4>
-                <p>€${item.price.toFixed(2)} × ${item.quantity}</p>
-            </div>
-            <div>
-                <input type="number" min="1" value="${item.quantity}"
-                       onchange="updateQty('${item.item_id}',this.value)">
-                <button onclick="removeItem('${item.item_id}')">Remove</button>
-            </div>
-        </div>`).join('');
-}
+    window.removeItem = id=>{
+        const item = cart.find(i=>i.item_id===id);
+        if(!item) return;
 
-window.updateQty = (id, val)=>{
-    const item = cart.find(i=>i.item_id===id);
-    if(item) item.quantity = Math.max(1, parseInt(val)||1);
-    updateCart();
-};
+        const value = item.price * item.quantity;
+        const items = [{ ...item }];
 
-window.removeItem = id=>{
-    const item = cart.find(i=>i.item_id===id);
-    if(!item) return;
+        gtag('event', 'remove_from_cart', { currency: 'EUR', value, items });
+        dataLayer.push({ event: 'remove_from_cart', ecommerce: { currency:'EUR', value, items } });
 
-    const value = item.price * item.quantity;
-    const items = [{ ...item }];
+        cart.splice(cart.indexOf(item),1);
+        updateCart();
 
-    gtag('event', 'remove_from_cart', { currency: 'EUR', value, items });
-    dataLayer.push({ event: 'remove_from_cart', ecommerce: { currency:'EUR', value, items } });
+        if(cart.length===0) navigateTo('landing');
+    };
 
-    cart.splice(cart.indexOf(item),1);
-    updateCart();
+    const cartObserver = new IntersectionObserver(entries=>{
+        if(entries[0].isIntersecting && cart.length>0){
+            const items = cart.map(i=>({...i}));
+            const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
 
-    if(cart.length===0) navigateTo('landing');
-};
+            gtag('event', 'view_cart', { currency: 'EUR', value, items });
+            dataLayer.push({ event: 'view_cart', ecommerce: { currency:'EUR', value, items } });
+            cartObserver.unobserve(entries[0].target);
+        }
+    }, { threshold: 0.5 });
 
-/* Trigger view_cart when cart page is shown */
-const cartObserver = new IntersectionObserver(entries=>{
-    if(entries[0].isIntersecting && cart.length>0){
+    const cartSec = $('#cart');
+    if(cartSec) cartObserver.observe(cartSec);
+
+    /* 4. PROCEED TO CHECKOUT → add_shipping_info */
+    $('#proceed-checkout').addEventListener('click', ()=>{
         const items = cart.map(i=>({...i}));
         const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
 
-        gtag('event', 'view_cart', { currency: 'EUR', value, items });
-        dataLayer.push({ event: 'view_cart', ecommerce: { currency:'EUR', value, items } });
-        cartObserver.unobserve(entries[0].target);
-    }
-}, { threshold: 0.5 });
+        gtag('event', 'add_shipping_info', {
+            currency: 'EUR',
+            value,
+            shipping_tier: 'Standard Ground',
+            items
+        });
 
-document.addEventListener('DOMContentLoaded', ()=>{
-    const cartSec = $('#cart');
-    if(cartSec) cartObserver.observe(cartSec);
-});
+        dataLayer.push({
+            event: 'add_shipping_info',
+            ecommerce: { currency:'EUR', value, shipping_tier:'Standard Ground', items }
+        });
 
-/* ==============================================================
-   4. PROCEED TO CHECKOUT → add_shipping_info
-   ============================================================== */
-$('#proceed-checkout').addEventListener('click', ()=>{
-    const items = cart.map(i=>({...i}));
-    const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
-
-    gtag('event', 'add_shipping_info', {
-        currency: 'EUR',
-        value,
-        shipping_tier: 'Standard Ground',
-        items
+        navigateTo('checkout');
     });
 
-    dataLayer.push({
-        event: 'add_shipping_info',
-        ecommerce: { currency:'EUR', value, shipping_tier:'Standard Ground', items }
+    /* 5. PURCHASE */
+    $('#purchase').addEventListener('click', ()=>{
+        if(!$('#firstName').value || !$('#lastName').value || !$('#country').value){
+            alert('Please fill all fields');
+            return;
+        }
+
+        const transaction_id = 'T_' + Date.now();
+        const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+        const items = cart.map(i=>({...i}));
+
+        gtag('event', 'purchase', {
+            transaction_id,
+            value,
+            tax: 0,
+            shipping: 0,
+            currency: 'EUR',
+            items
+        });
+
+        dataLayer.push({
+            event: 'purchase',
+            ecommerce: { transaction_id, value, currency:'EUR', items }
+        });
+
+        $('#order-details').innerHTML = `
+            <p><strong>Order:</strong> ${transaction_id}</p>
+            <p><strong>Total:</strong> €${value.toFixed(2)}</p>
+            <p>Thank you, ${$('#firstName').value}!</p>
+        `;
+
+        cart.length = 0;
+        updateCart();
+        navigateTo('thankyou');
     });
 
-    navigateTo('checkout');
-});
-
-/* ==============================================================
-   5. PURCHASE
-   ============================================================== */
-$('#purchase').addEventListener('click', ()=>{
-    if(!$('#firstName').value || !$('#lastName').value || !$('#country').value){
-        alert('Please fill all fields');
-        return;
-    }
-
-    const transaction_id = 'T_' + Date.now();
-    const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
-    const items = cart.map(i=>({...i}));
-
-    gtag('event', 'purchase', {
-        transaction_id,
-        value,
-        tax: 0,
-        shipping: 0,
-        currency: 'EUR',
-        items
+    /* 6. NEWSLETTER */
+    $('#subscribe').addEventListener('click', ()=>{
+        const email = $('#newsletter-email').value.trim();
+        if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            alert('Valid email required');
+            return;
+        }
+        gtag('event', 'generate_lead', { value:1, currency:'EUR' });
+        dataLayer.push({ event: 'newsletter_signup', email });
+        $('#newsletter-email').value='';
+        alert('Subscribed!');
     });
 
-    dataLayer.push({
-        event: 'purchase',
-        ecommerce: { transaction_id, value, currency:'EUR', items }
-    });
-
-    $('#order-details').innerHTML = `
-        <p><strong>Order:</strong> ${transaction_id}</p>
-        <p><strong>Total:</strong> €${value.toFixed(2)}</p>
-        <p>Thank you, ${$('#firstName').value}!</p>
-    `;
-
-    cart.length = 0;
-    updateCart();
-    navigateTo('thankyou');
-});
-
-/* ==============================================================
-   6. NEWSLETTER
-   ============================================================== */
-$('#subscribe').addEventListener('click', ()=>{
-    const email = $('#newsletter-email').value.trim();
-    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-        alert('Valid email required');
-        return;
-    }
-    gtag('event', 'generate_lead', { value:1, currency:'EUR' });
-    dataLayer.push({ event: 'newsletter_signup', email });
-    $('#newsletter-email').value='';
-    alert('Subscribed!');
-});
-
-/* ==============================================================
-   INIT
-   ============================================================== */
-document.addEventListener('DOMContentLoaded', ()=>{
+    /* INIT */
     showSection('landing');
     history.replaceState({section:'landing'},'','#landing');
 });
 </script>
 </body>
 </html>
-
