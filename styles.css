@@ -757,6 +757,158 @@ body {
     border: 1px solid #e2e8f0;
 }
 
+/* ====================== THANK YOU SECTION ====================== */
+.thank-you-section {
+    background: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.thank-you-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f8fafc;
+    padding: 40px 30px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.thank-you-container h1 {
+    font-size: 2.5rem;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.thank-you-container p {
+    font-size: 1.1rem;
+    color: #718096;
+    margin-bottom: 30px;
+}
+
+.thank-you-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-button.secondary {
+    background: transparent;
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.cta-button.secondary:hover {
+    background: #667eea;
+    color: white;
+}
+
+.order-items {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.order-items h4 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.order-items ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-items li {
+    padding: 5px 0;
+    border-bottom: 1px solid #e2e8f0;
+    color: #4a5568;
+}
+
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thank-you-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f8fafc;
+    padding: 40px 30px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.thank-you-container h1 {
+    font-size: 2.5rem;
+    color: #2d3748;
+    margin-bottom: 20px;
+}
+
+.thank-you-container p {
+    font-size: 1.2rem;
+    color: #718096;
+    margin-bottom: 30px;
+}
+
+.order-info h3 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.order-info p {
+    margin-bottom: 10px;
+    color: #4a5568;
+    text-align: left;
+}
+
+.order-items {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.order-items h4 {
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.order-items ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-items li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    color: #4a5568;
+}
+
+.order-items li:last-child {
+    border-bottom: none;
+}
+
+.thank-you-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.cta-button.secondary {
+    background: transparent;
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.cta-button.secondary:hover {
+    background: #667eea;
+    color: white;
+}
+
 
 /* ====================== NOTIFICATION SYSTEM ====================== */
 .notification {
