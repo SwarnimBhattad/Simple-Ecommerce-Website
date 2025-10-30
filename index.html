@@ -3,248 +3,368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad Tracking Demo</title>
+    <title>Ad Tracking Demo – E-commerce</title>
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Google Consent Mode (before GTM) -->
+    <!-- ====================== 1. GOOGLE TAG MANAGER ====================== -->
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){
+        w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-N8N8QH73');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- ====================== 2. gtag.js (GA4) ====================== -->
+    <!-- Google tag (gtag.js) – replace G-XXXXXXXXXX with your GA4 measurement ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-23GMWNMGG0"></script>
     <script>
-      // Default consent: denied until user accepts
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        functionality_storage: 'denied',
-        personalization_storage: 'denied',
-        security_storage: 'granted'
-      });
-    </script>
-    <!-- End Google Consent Mode -->
+      gtag('js', new Date());
 
-   <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-N8N8QH73');</script>
-<!-- End Google Tag Manager -->
-    
+      // DEBUG MODE – remove in production
+      gtag('config', 'G-23GMWNMGG0', { debug_mode: true });
+    </script>
 </head>
 <body>
-   <!-- Google Tag Manager (noscript) -->
+
+<!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8N8QH73"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-    <!-- Cookie Consent Banner -->
-    <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background: #333; color: #fff; padding: 20px; text-align: center; z-index: 9999;">
-      <p style="margin: 0 0 10px;">We use cookies to analyze traffic and improve your experience. Accept cookies to enable tracking.</p>
-      <button id="accept-cookies" style="background: #4CAF50; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Accept</button>
-      <button id="reject-cookies" style="background: #999; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Reject</button>
-    </div>
+<div id="landing" class="section">
+    <h1 class="main-title">Ad Tracking Demo E-commerce</h1>
+    <h2 class="welcome-title">Welcome to the Landing Page</h2>
+    <nav>
+        <a href="#products">View Products</a>
+        <a href="#cart">View Cart</a>
+        <a href="#newsletter">Subscribe</a>
+    </nav>
+</div>
 
-    <script>
-      document.getElementById('accept-cookies').addEventListener('click', function() {
-        gtag('consent', 'update', {
-          ad_storage: 'granted',
-          analytics_storage: 'granted',
-          functionality_storage: 'granted',
-          personalization_storage: 'granted'
-        });
-        document.getElementById('cookie-banner').style.display = 'none';
-        window.dataLayer.push({'event': 'cookie_consent_accepted'});
-      });
+<!-- ====================== PRODUCTS ====================== -->
+<div id="products" class="section" style="display:none;">
+    <h1>Products Offered</h1>
 
-      document.getElementById('reject-cookies').addEventListener('click', function() {
-        gtag('consent', 'update', {
-          ad_storage: 'denied',
-          analytics_storage: 'denied',
-          functionality_storage: 'denied',
-          personalization_storage: 'denied'
-        });
-        document.getElementById('cookie-banner').style.display = 'none';
-        window.dataLayer.push({'event': 'cookie_consent_rejected'});
-      });
-    </script>
-    <!-- End Cookie Consent Banner -->
-
-    <div id="landing" class="section">
-        <h1 class="main-title">Ad Tracking Demo Ecommerce</h1>
-        <h2 class="welcome-title">Welcome to Landing Page</h2>
-        <nav>
-            <a href="#products">View Products Offered</a>
-            <a href="#cart">View Cart Items</a>
-            <a href="#newsletter">Subscribe for Updates</a>
-        </nav>
-    </div>
-
-    <div id="products" class="section" style="display:none;">
-        <h1>Products Offered</h1>
-        <div class="item-block" data-id="001" onclick="addToCart('Oral-Zahnbürste', 5, '001', 'Oral-B', 'Blue', 1)">
-            <p>Name: Oral-Zahnbürste</p>
-            <p>Brand: Oral-B</p>
-            <p>Color: Blue</p>
-            <p>Price: €5</p>
-            <p>Quantity: <span class="quantity">1</span></p>
+    <div class="products-grid">
+        <!-- Product 1 -->
+        <div class="item-block" data-product='{
+                "item_id":"001","item_name":"Oral-Zahnbürste","item_brand":"Oral-B",
+                "item_category":"Hygiene","price":5,"currency":"EUR"
+            }'>
+            <h3>Oral-Zahnbürste</h3>
+            <p class="price">€5</p>
+            <p>Brand: Oral-B • Color: Blue</p>
         </div>
-        <div class="item-block" data-id="002" onclick="addToCart('Electric Razor', 15, '002', 'Brand X', 'Black', 1)">
-            <p>Name: Electric Razor</p>
-            <p>Brand: Brand X</p>
-            <p>Color: Black</p>
-            <p>Price: €15</p>
-            <p>Quantity: <span class="quantity">1</span></p>
+
+        <!-- Product 2 -->
+        <div class="item-block" data-product='{
+                "item_id":"002","item_name":"Electric Razor","item_brand":"Brand X",
+                "item_category":"Personal Care","price":15,"currency":"EUR"
+            }'>
+            <h3>Electric Razor</h3>
+            <p class="price">€15</p>
+            <p>Brand: Brand X • Color: Black</p>
         </div>
-        <div class="item-block" data-id="003" onclick="addToCart('Hair Dryer', 10, '003', 'Brand Y', 'White', 1)">
-            <p>Name: Hair Dryer</p>
-            <p>Brand: Brand Y</p>
-            <p>Color: White</p>
-            <p>Price: €10</p>
-            <p>Quantity: <span class="quantity">1</span></p>
+
+        <!-- Product 3 -->
+        <div class="item-block" data-product='{
+                "item_id":"003","item_name":"Hair Dryer","item_brand":"Brand Y",
+                "item_category":"Personal Care","price":10,"currency":"EUR"
+            }'>
+            <h3>Hair Dryer</h3>
+            <p class="price">€10</p>
+            <p>Brand: Brand Y • Color: White</p>
         </div>
     </div>
+</div>
 
-    <div id="cart" class="section" style="display:none;">
-        <h1>View Cart Items</h1>
-        <div id="cart-items"></div>
-        <button id="proceed-checkout" onclick="proceedToCheckout()">Proceed to Checkout</button>
+<!-- ====================== CART ====================== -->
+<div id="cart" class="section" style="display:none;">
+    <h1>View Cart Items</h1>
+    <div id="cart-items" class="cart-container"></div>
+    <div id="cart-total" class="cart-total" style="display:none;">
+        <h3>Total: €<span id="total-amount">0.00</span></h3>
     </div>
+    <button id="proceed-checkout" style="display:none;">Proceed to Checkout</button>
+</div>
 
-    <div id="checkout" class="section" style="display:none;">
-        <h1>Checkout</h1>
-        <div id="checkout-items"></div>
-        <input type="text" id="firstName" placeholder="First Name"><br>
-        <input type="text" id="lastName" placeholder="Last Name"><br>
-        <input type="text" id="country" placeholder="Country"><br>
-        <button id="purchase" onclick="purchase()">Finish Purchase</button>
+<!-- ====================== CHECKOUT ====================== -->
+<div id="checkout" class="section" style="display:none;">
+    <h1>Checkout</h1>
+    <div class="checkout-form">
+        <input type="text" id="firstName" placeholder="First Name" required>
+        <input type="text" id="lastName"  placeholder="Last Name"  required>
+        <input type="text" id="country"   placeholder="Country"   required>
+        <div id="checkout-total" class="checkout-total">
+            Total: €<span id="checkout-total-amount">0.00</span>
+        </div>
+        <button id="purchase">Finish Purchase</button>
     </div>
+</div>
 
-    <div id="newsletter" class="section" style="display:none;">
-        <h1 class="newsletter-title">Subscribe for Updates</h1>
-        <p>Get the latest promo codes and event news!</p>
-        <input type="email" id="email" placeholder="Enter email"><br>
-        <button id="subscribe" onclick="subscribe()">Subscribe</button>
+<!-- ====================== NEWSLETTER ====================== -->
+<div id="newsletter" class="section" style="display:none;">
+    <h1 class="newsletter-title">Subscribe for Updates</h1>
+    <p>Get the latest promo codes and event news!</p>
+    <div class="newsletter-form">
+        <input type="email" id="newsletter-email" placeholder="Enter your email">
+        <button id="subscribe">Subscribe</button>
     </div>
+</div>
 
-    <div id="thankyou" class="section" style="display:none;">
-        <h1>Thank You for Shopping!</h1>
-    </div>
+<!-- ====================== THANK YOU ====================== -->
+<div id="thankyou" class="section" style="display:none;">
+    <h1>Thank You for Shopping!</h1>
+    <div id="order-details" class="order-summary"></div>
+</div>
 
-    <script>
-        let cart = [];
+<script>
+/* ==============================================================
+   1. GLOBAL STATE & HELPERS
+   ============================================================== */
+const cart = [];
 
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-            // Show the selected one
-            document.getElementById(sectionId).style.display = 'block';
-        }
+function $(id){ return document.getElementById(id); }
 
-        function navigateTo(sectionId) {
-            showSection(sectionId);
-            history.pushState({ section: sectionId }, '', '#' + sectionId);
-        }
+/* ---------- navigation ---------- */
+function showSection(id){
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    $(id).style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+function navigateTo(id){
+    showSection(id);
+    history.pushState({section:id},'', '#'+id);
+}
+window.addEventListener('popstate', e=>{
+    const sec = e.state?.section || 'landing';
+    showSection(sec);
+});
 
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.section) {
-                showSection(event.state.section);
-            } else {
-                showSection('landing');
-            }
+/* ---------- smooth anchor links ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+        e.preventDefault();
+        const sec = a.getAttribute('href').slice(1);
+        navigateTo(sec);
+    });
+});
+
+/* ==============================================================
+   2. PRODUCT → view_item_list  (fires once when section visible)
+   ============================================================== */
+const productObserver = new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+        const items = Array.from(document.querySelectorAll('.item-block')).map(el=>{
+            const p = JSON.parse(el.dataset.product);
+            return {
+                item_id: p.item_id,
+                item_name: p.item_name,
+                item_brand: p.item_brand,
+                item_category: p.item_category,
+                price: p.price,
+                quantity: 1
+            };
         });
 
-        function addToCart(name, price, id, brand, color, quantity) {
-            cart.push({ name, price, id, brand, color, quantity });
-            alert(`${name} added to cart!`);
-            navigateTo('cart');
-            updateCartDisplay();
-        }
-
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cart-items');
-            cartItems.innerHTML = cart.map(item => `
-                <div class="cart-item">
-                    <p>${item.name} ($${item.price}) - ID: ${item.id}</p>
-                    <p>Brand: ${item.brand}, Color: ${item.color}, Qty: ${item.quantity}</p>
-                    <button onclick="removeFromCart('${item.id}')">Remove</button>
-                    <button onclick="addQuantity('${item.id}')">Add Qty</button>
-                </div>
-            `).join('');
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCartDisplay();
-            if (cart.length === 0) {
-                navigateTo('landing');
-            }
-        }
-
-        function addQuantity(id) {
-            const item = cart.find(item => item.id === id);
-            if (item) item.quantity++;
-            updateCartDisplay();
-        }
-
-        function proceedToCheckout() {
-            if (cart.length > 0) {
-                navigateTo('checkout');
-                const checkoutItems = document.getElementById('checkout-items');
-                checkoutItems.innerHTML = cart.map(item => `
-                    <p>${item.name} ($${item.price}) - Qty: ${item.quantity}</p>
-                `).join('');
-            } else {
-                alert('Cart is empty!');
-            }
-        }
-
-        function purchase() {
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const country = document.getElementById('country').value;
-            if (firstName && lastName && country) {
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({
-                    event: 'purchase',
-                    value: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-                    currency: 'EUR',
-                    items: cart,
-                    firstName: firstName,
-                    lastName: lastName,
-                    country: country
-                });
-                alert('Purchase completed!');
-                cart = [];
-                navigateTo('thankyou');
-            } else {
-                alert('Please fill all fields!');
-            }
-        }
-
-        function subscribe() {
-            const email = document.getElementById('email').value;
-            if (email) {
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({
-                    event: 'newsletter_subscription',
-                    email: email
-                });
-                navigateTo('thankyou');
-            }
-        }
-
-        // Smooth scrolling + navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const section = this.getAttribute('href').substring(1);
-                navigateTo(section);
-            });
+        gtag('event', 'view_item_list', {
+            item_list_id: 'main_product_list',
+            item_list_name: 'Main Product List',
+            items: items
         });
 
-        // Initialize default section
-        showSection('landing');
-        history.replaceState({ section: 'landing' }, '', '#landing');
-    </script>
+        // push the same payload to dataLayer for GTM
+        dataLayer.push({
+            event: 'view_item_list',
+            ecommerce: { items }
+        });
+
+        productObserver.unobserve(entries[0].target);
+    }
+}, { threshold: 0.3 });
+
+document.addEventListener('DOMContentLoaded',()=>{
+    const prodSec = $('#products');
+    if(prodSec) productObserver.observe(prodSec);
+});
+
+/* ==============================================================
+   3. ADD TO CART
+   ============================================================== */
+document.querySelectorAll('.item-block').forEach(block=>{
+    block.addEventListener('click',()=>{
+        const p = JSON.parse(block.dataset.product);
+        const existing = cart.find(i=>i.item_id===p.item_id);
+        if(existing) existing.quantity++;
+        else cart.push({ ...p, quantity:1 });
+
+        // ----- GA4 event -----
+        gtag('event', 'add_to_cart', {
+            currency: p.currency,
+            value: p.price,
+            items: [{ ...p, quantity:1 }]
+        });
+
+        // ----- dataLayer for GTM -----
+        dataLayer.push({
+            event: 'add_to_cart',
+            ecommerce: { currency: p.currency, value: p.price, items: [{ ...p, quantity:1 }] }
+        });
+
+        updateCart();
+        navigateTo('cart');
+    });
+});
+
+/* ==============================================================
+   4. CART DISPLAY & CHECKOUT
+   ============================================================== */
+function updateCart(){
+    const container = $('#cart-items');
+    const totalEl   = $('#total-amount');
+    const checkoutBtn = $('#proceed-checkout');
+
+    if(cart.length===0){
+        container.innerHTML = '<p class="placeholder">Your cart is empty</p>';
+        $('#cart-total').style.display='none';
+        checkoutBtn.style.display='none';
+        return;
+    }
+
+    const total = cart.reduce((s,i)=>s + i.price*i.quantity,0);
+
+    container.innerHTML = cart.map(item=>`
+        <div class="cart-item">
+            <div>
+                <h4>${item.item_name}</h4>
+                <p>€${item.price.toFixed(2)} each</p>
+            </div>
+            <div>
+                <input type="number" min="1" value="${item.quantity}"
+                       onchange="updateQty('${item.item_id}',this.value)">
+                <button onclick="removeItem('${item.item_id}')">Remove</button>
+            </div>
+        </div>`).join('');
+
+    totalEl.textContent = total.toFixed(2);
+    $('#checkout-total-amount').textContent = total.toFixed(2);
+    $('#cart-total').style.display='block';
+    checkoutBtn.style.display='block';
+}
+window.updateQty = (id,qty)=>{
+    const item = cart.find(i=>i.item_id===id);
+    if(item) item.quantity = Math.max(1,parseInt(qty)||1);
+    updateCart();
+};
+window.removeItem = id=>{
+    const idx = cart.findIndex(i=>i.item_id===id);
+    if(idx>-1) cart.splice(idx,1);
+    updateCart();
+};
+
+$('#proceed-checkout').addEventListener('click',()=>{
+    // ----- GA4 begin_checkout -----
+    const items = cart.map(i=>({...i}));
+    const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+
+    gtag('event', 'begin_checkout', {
+        currency: 'EUR',
+        value,
+        items
+    });
+
+    dataLayer.push({
+        event: 'begin_checkout',
+        ecommerce: { currency:'EUR', value, items }
+    });
+
+    navigateTo('checkout');
+});
+
+/* ==============================================================
+   5. PURCHASE
+   ============================================================== */
+$('#purchase').addEventListener('click',()=>{
+
+    // simple validation
+    if(!$('#firstName').value || !$('#lastName').value || !$('#country').value){
+        alert('Please fill all fields');
+        return;
+    }
+
+    const transaction_id = 'T_' + Date.now();
+    const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+    const items = cart.map(i=>({...i}));
+
+    // ----- GA4 purchase -----
+    gtag('event', 'purchase', {
+        transaction_id,
+        value,
+        tax: 0,
+        shipping: 0,
+        currency: 'EUR',
+        coupon: '',               // optional
+        items
+    });
+
+    // ----- dataLayer for GTM (Google Ads conversion) -----
+    dataLayer.push({
+        event: 'purchase',
+        ecommerce: {
+            transaction_id,
+            value,
+            currency: 'EUR',
+            items
+        }
+    });
+
+    // show thank-you
+    $('#order-details').innerHTML = `
+        <p><strong>Order ID:</strong> ${transaction_id}</p>
+        <p><strong>Total:</strong> €${value.toFixed(2)}</p>
+        <p>Thank you, ${$('#firstName').value}!</p>
+    `;
+
+    cart.length = 0;
+    updateCart();
+    navigateTo('thankyou');
+});
+
+/* ==============================================================
+   6. NEWSLETTER
+   ============================================================== */
+$('#subscribe').addEventListener('click',()=>{
+    const email = $('#newsletter-email').value.trim();
+    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        alert('Enter a valid e-mail');
+        return;
+    }
+
+    gtag('event', 'generate_lead', {
+        value: 1,
+        currency: 'EUR'
+    });
+
+    dataLayer.push({ event: 'newsletter_signup', email });
+
+    $('#newsletter-email').value = '';
+    alert('Subscribed!');
+
+    // optional: go to thank-you
+    navigateTo('thankyou');
+});
+
+/* ==============================================================
+   7. INITIALISE
+   ============================================================== */
+document.addEventListener('DOMContentLoaded',()=>{
+    showSection('landing');
+    history.replaceState({section:'landing'},'','#landing');
+});
+</script>
 </body>
 </html>
-
