@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-N8N8QH73');</script>
-<!-- End Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-N8N8QH73');</script>
+    <!-- End Google Tag Manager -->
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechStore Pro - GA4 E-commerce Demo</title>
     <link rel="stylesheet" href="styles.css">
-    
+
     <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- ====================== GOOGLE ANALYTICS 4 (GA4) ====================== -->
     <!-- Replace G-XXXXXXXXXX with your actual GA4 Measurement ID -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-23GMWNMGG0"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        
+
         // Configure GA4 with enhanced e-commerce settings
-        gtag('config', 'G-23GMWNMGG0', { 
+        gtag('config', 'G-23GMWNMGG0', {
             debug_mode: true, // Remove in production
             enhanced_ecommerce: true,
             send_page_view: true,
@@ -37,11 +42,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         });
     </script>
 </head>
+
 <body>
     <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8N8QH73"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8N8QH73" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <!-- ====================== SIMPLE HEADER ====================== -->
     <header class="header">
@@ -81,7 +87,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <!-- Products Grid -->
             <div class="products-grid" id="products-grid">
-                
+
                 <!-- Product 1: iPhone 15 Pro -->
                 <div class="product-card" data-product='{
                     "item_id":"IPHONE15PRO",
@@ -256,7 +262,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="section-header">
                 <h2>Your Cart</h2>
             </div>
-            
+
             <div class="cart-container">
                 <div id="cart-items" class="cart-items">
                     <div class="empty-cart">
@@ -267,7 +273,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </button>
                     </div>
                 </div>
-                
+
                 <div id="cart-summary" class="cart-summary" style="display: none;">
                     <div class="summary-details">
                         <div class="summary-row total">
@@ -304,7 +310,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <input type="text" id="city" placeholder="City" required>
                         <input type="text" id="zip" placeholder="ZIP Code" required>
                     </div>
-                    
+
                     <div class="checkout-total">
                         <div class="total-row final-total">
                             <span>Total:</span>
@@ -335,141 +341,296 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <script>
-    /* ============================================================== 
-       TECHSTORE PRO - GA4 E-COMMERCE DEMO
-       Comprehensive Google Analytics 4 E-commerce Implementation
-       ============================================================== */
-    
-    // ====================== GLOBAL STATE ======================
-    const cart = [];
-    const userPreferences = {
-        currency: 'EUR',
-        userType: 'new_customer',
-        loyaltyTier: 'bronze'
-    };
-    
-    // Helper function to get DOM elements with error handling
-    const $ = id => {
-        // Remove # if present in the id
-        const cleanId = id.replace('#', '');
-        const element = document.getElementById(cleanId);
-        if (!element) {
-            console.warn(`Element with id '${cleanId}' not found`);
-        }
-        return element;
-    };
-    
-    // ====================== UTILITY FUNCTIONS ======================
-    
-    /**
-     * Check if required elements are available
-     * @returns {boolean} - True if all elements are available
-     */
-    function checkRequiredElements() {
-        const requiredElements = [
-            'cart-items', 'cart-summary', 'cart-count', 'home', 
-            'products', 'cart', 'checkout-form'
-        ];
-        
-        const missingElements = requiredElements.filter(id => !document.getElementById(id));
-        
-        if (missingElements.length > 0) {
-            console.warn('Missing required elements:', missingElements);
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Navigate to a specific section
-     * @param {string} sectionId - ID of the section to navigate to
-     */
-    function navigateTo(sectionId) {
-        // Hide all sections
-        document.querySelectorAll('section').forEach(section => {
-            section.style.display = 'none';
-            section.classList.remove('active');
-        });
-        
-        // Show target section
-        const targetSection = $(sectionId);
-        if (targetSection) {
-            targetSection.style.display = 'block';
-            targetSection.classList.add('active');
-            
-            // Scroll to top of page first, then to section
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Small delay to ensure smooth transition
-            setTimeout(() => {
-                targetSection.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        }
-        
-        // Track page view
-        trackPageView(sectionId);
-    }
-    
-    /**
-     * Track page view event
-     * @param {string} pageName - Name of the page being viewed
-     */
-    function trackPageView(pageName) {
-        gtag('event', 'page_view', {
-            page_title: pageName,
-            page_location: window.location.href,
-            page_path: `/${pageName}`,
-            custom_parameter_1: userPreferences.userType,
-            custom_parameter_2: userPreferences.loyaltyTier
-        });
-    }
-    
-    // ====================== GA4 E-COMMERCE EVENTS ======================
-    
-    /**
-     * Track view_item_list event when products section is visible
-     * This fires when the products section comes into view
-     */
-    function trackViewItemList() {
-        const items = Array.from(document.querySelectorAll('.product-card')).map((card, index) => {
-            const product = JSON.parse(card.dataset.product);
-            return {
-                item_id: product.item_id,
-                item_name: product.item_name,
-                item_brand: product.item_brand,
-                item_category: product.item_category,
-                item_category2: product.item_category2,
-                item_category3: product.item_category3,
-                item_variant: product.item_variant,
-                price: product.price,
-                quantity: 1,
-                affiliation: product.affiliation,
-                coupon: product.coupon,
-                discount: product.discount,
-                item_list_id: product.item_list_id,
-                item_list_name: product.item_list_name,
-                index: index
-            };
-        });
+    <!-- ====================== THANK YOU SECTION ====================== -->
+    <section id="thank-you" class="thank-you-section">
+        <div class="container">
+            <div class="thank-you-container">
+                <div class="success-icon">✅</div>
+                <h1>Thank You for Your Order!</h1>
+                <p>Your order has been successfully placed and is being processed.</p>
 
-        gtag('event', 'view_item_list', {
-            item_list_id: 'featured_products',
-            item_list_name: 'Featured Products',
-            items: items
-        });
-    }
-    
-    /**
-     * Track view_item event when a product is viewed
-     * @param {Object} product - Product data
-     */
-    function trackViewItem(product) {
-        gtag('event', 'view_item', {
-            currency: product.currency,
-            value: product.price,
-            items: [{
+                <div id="thank-you-order-details" class="order-details">
+                    <!-- Order details will be populated by JavaScript -->
+                </div>
+
+                <div class="thank-you-actions">
+                    <button class="cta-button" onclick="navigateTo('products')">
+                        Continue Shopping
+                    </button>
+                    <button class="cta-button secondary" onclick="navigateTo('products')">
+                        Browse Products
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        /* ============================================================== 
+           TECHSTORE PRO - GA4 E-COMMERCE DEMO
+           Comprehensive Google Analytics 4 E-commerce Implementation
+           ============================================================== */
+
+        // ====================== GLOBAL STATE ======================
+        const cart = [];
+        const userPreferences = {
+            currency: 'EUR',
+            userType: 'new_customer',
+            loyaltyTier: 'bronze'
+        };
+
+        // Helper function to get DOM elements with error handling
+        const $ = id => {
+            // Remove # if present in the id
+            const cleanId = id.replace('#', '');
+            const element = document.getElementById(cleanId);
+            if (!element) {
+                console.warn(`Element with id '${cleanId}' not found`);
+            }
+            return element;
+        };
+
+        // ====================== UTILITY FUNCTIONS ======================
+
+        /**
+         * Get URL parameter value
+         * @param {string} name - Parameter name
+         * @returns {string|null} - Parameter value or null
+         */
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        /**
+         * Check if required elements are available
+         * @returns {boolean} - True if all elements are available
+         */
+        function checkRequiredElements() {
+            const requiredElements = [
+                'cart-items', 'cart-summary', 'cart-count', 'home',
+                'products', 'cart', 'checkout-form'
+            ];
+
+            const missingElements = requiredElements.filter(id => !document.getElementById(id));
+
+            if (missingElements.length > 0) {
+                console.warn('Missing required elements:', missingElements);
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Navigate to a specific section
+         * @param {string} sectionId - ID of the section to navigate to
+         */
+        function navigateTo(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+                section.classList.remove('active');
+            });
+
+            // Show target section
+            const targetSection = $(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                targetSection.classList.add('active');
+
+                // Scroll to top of page first, then to section
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Small delay to ensure smooth transition
+                setTimeout(() => {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+
+            // Track page view
+            trackPageView(sectionId);
+        }
+
+        /**
+         * Display thank you page with order details
+         */
+        function displayThankYouPage() {
+            const orderData = JSON.parse(localStorage.getItem('orderConfirmation') || '{}');
+            const orderDetailsEl = $('#thank-you-order-details');
+
+            if (!orderData.transactionId) {
+                orderDetailsEl.innerHTML = `
+                <div class="order-info">
+                    <h3>Order Details</h3>
+                    <p>No order data found. Please return to the <a href="index.html">homepage</a>.</p>
+                </div>
+            `;
+                return;
+            }
+
+            orderDetailsEl.innerHTML = `
+            <div class="order-info">
+                <h3>Order Details</h3>
+                <p><strong>Order ID:</strong> ${orderData.transactionId}</p>
+                <p><strong>Total:</strong> €${orderData.total.toFixed(2)}</p>
+                <p><strong>Items:</strong> ${orderData.itemCount} products</p>
+                <p><strong>Customer:</strong> ${orderData.customer.firstName} ${orderData.customer.lastName}</p>
+                <p><strong>Email:</strong> ${orderData.customer.email}</p>
+                <p><strong>Shipping to:</strong> ${orderData.customer.city}, ${orderData.customer.zip}</p>
+                
+                ${orderData.items && orderData.items.length > 0 ? `
+                    <div class="order-items">
+                        <h4>Ordered Items:</h4>
+                        <ul>
+                            ${orderData.items.map(item => `
+                                <li>${item.item_name} - €${item.price.toFixed(2)} x ${item.quantity}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+
+            // Clear order data from localStorage after displaying
+            setTimeout(() => {
+                localStorage.removeItem('orderConfirmation');
+            }, 10000); // Clear after 10 seconds
+        }
+
+        /**
+         * Handle URL-based routing
+         */
+        function handleUrlRouting() {
+            const page = getUrlParameter('page');
+
+            if (page === 'thank-you') {
+                // Show thank you page
+                navigateTo('thank-you');
+                displayThankYouPage();
+
+                // Track thank you page view
+                gtag('event', 'page_view', {
+                    page_title: 'Thank You Page',
+                    page_location: window.location.href,
+                    page_path: '/thank-you'
+                });
+            } else {
+                // Show home page by default
+                navigateTo('home');
+            }
+        }
+
+        /**
+         * Track page view event
+         * @param {string} pageName - Name of the page being viewed
+         */
+        function trackPageView(pageName) {
+            gtag('event', 'page_view', {
+                page_title: pageName,
+                page_location: window.location.href,
+                page_path: `/${pageName}`,
+                custom_parameter_1: userPreferences.userType,
+                custom_parameter_2: userPreferences.loyaltyTier
+            });
+        }
+
+        // ====================== GA4 E-COMMERCE EVENTS ======================
+
+        /**
+         * Track view_item_list event when products section is visible
+         * This fires when the products section comes into view
+         */
+        function trackViewItemList() {
+            const items = Array.from(document.querySelectorAll('.product-card')).map((card, index) => {
+                const product = JSON.parse(card.dataset.product);
+                return {
+                    item_id: product.item_id,
+                    item_name: product.item_name,
+                    item_brand: product.item_brand,
+                    item_category: product.item_category,
+                    item_category2: product.item_category2,
+                    item_category3: product.item_category3,
+                    item_variant: product.item_variant,
+                    price: product.price,
+                    quantity: 1,
+                    affiliation: product.affiliation,
+                    coupon: product.coupon,
+                    discount: product.discount,
+                    item_list_id: product.item_list_id,
+                    item_list_name: product.item_list_name,
+                    index: index
+                };
+            });
+
+            gtag('event', 'view_item_list', {
+                item_list_id: 'featured_products',
+                item_list_name: 'Featured Products',
+                items: items
+            });
+        }
+
+        /**
+         * Track view_item event when a product is viewed
+         * @param {Object} product - Product data
+         */
+        function trackViewItem(product) {
+            gtag('event', 'view_item', {
+                currency: product.currency,
+                value: product.price,
+                items: [{
+                    item_id: product.item_id,
+                    item_name: product.item_name,
+                    item_brand: product.item_brand,
+                    item_category: product.item_category,
+                    item_category2: product.item_category2,
+                    item_category3: product.item_category3,
+                    item_variant: product.item_variant,
+                    price: product.price,
+                    quantity: 1,
+                    affiliation: product.affiliation,
+                    coupon: product.coupon,
+                    discount: product.discount
+                }]
+            });
+        }
+
+        /**
+         * Track select_item event when a product is selected
+         * @param {Object} product - Product data
+         */
+        function trackSelectItem(product) {
+            gtag('event', 'select_item', {
+                item_list_id: 'featured_products',
+                item_list_name: 'Featured Products',
+                items: [{
+                    item_id: product.item_id,
+                    item_name: product.item_name,
+                    item_brand: product.item_brand,
+                    item_category: product.item_category,
+                    item_category2: product.item_category2,
+                    item_category3: product.item_category3,
+                    item_variant: product.item_variant,
+                    price: product.price,
+                    quantity: 1,
+                    affiliation: product.affiliation,
+                    coupon: product.coupon,
+                    discount: product.discount,
+                    item_list_id: product.item_list_id,
+                    item_list_name: product.item_list_name,
+                    index: product.index
+                }]
+            });
+        }
+
+        /**
+         * Track add_to_cart event
+         * @param {Object} product - Product being added
+         * @param {number} quantity - Quantity being added
+         */
+        function trackAddToCart(product, quantity) {
+            const value = product.price * quantity;
+            const items = [{
                 item_id: product.item_id,
                 item_name: product.item_name,
                 item_brand: product.item_brand,
@@ -478,23 +639,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 item_category3: product.item_category3,
                 item_variant: product.item_variant,
                 price: product.price,
-                quantity: 1,
+                quantity: quantity,
                 affiliation: product.affiliation,
                 coupon: product.coupon,
                 discount: product.discount
-            }]
-        });
-    }
-    
-    /**
-     * Track select_item event when a product is selected
-     * @param {Object} product - Product data
-     */
-    function trackSelectItem(product) {
-        gtag('event', 'select_item', {
-            item_list_id: 'featured_products',
-            item_list_name: 'Featured Products',
-            items: [{
+            }];
+
+            gtag('event', 'add_to_cart', {
+                currency: product.currency,
+                value: value,
+                items: items
+            });
+        }
+
+        /**
+         * Track remove_from_cart event
+         * @param {Object} product - Product being removed
+         * @param {number} quantity - Quantity being removed
+         */
+        function trackRemoveFromCart(product, quantity) {
+            const value = product.price * quantity;
+            const items = [{
                 item_id: product.item_id,
                 item_name: product.item_name,
                 item_brand: product.item_brand,
@@ -503,401 +668,345 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 item_category3: product.item_category3,
                 item_variant: product.item_variant,
                 price: product.price,
-                quantity: 1,
+                quantity: quantity,
                 affiliation: product.affiliation,
                 coupon: product.coupon,
-                discount: product.discount,
-                item_list_id: product.item_list_id,
-                item_list_name: product.item_list_name,
-                index: product.index
-            }]
-        });
-    }
-    
-    /**
-     * Track add_to_cart event
-     * @param {Object} product - Product being added
-     * @param {number} quantity - Quantity being added
-     */
-    function trackAddToCart(product, quantity) {
-        const value = product.price * quantity;
-        const items = [{
-            item_id: product.item_id,
-            item_name: product.item_name,
-            item_brand: product.item_brand,
-            item_category: product.item_category,
-            item_category2: product.item_category2,
-            item_category3: product.item_category3,
-            item_variant: product.item_variant,
-            price: product.price,
-            quantity: quantity,
-            affiliation: product.affiliation,
-            coupon: product.coupon,
-            discount: product.discount
-        }];
+                discount: product.discount
+            }];
 
-        gtag('event', 'add_to_cart', {
-            currency: product.currency,
-            value: value,
-            items: items
-        });
-    }
-    
-    /**
-     * Track remove_from_cart event
-     * @param {Object} product - Product being removed
-     * @param {number} quantity - Quantity being removed
-     */
-    function trackRemoveFromCart(product, quantity) {
-        const value = product.price * quantity;
-        const items = [{
-            item_id: product.item_id,
-            item_name: product.item_name,
-            item_brand: product.item_brand,
-            item_category: product.item_category,
-            item_category2: product.item_category2,
-            item_category3: product.item_category3,
-            item_variant: product.item_variant,
-            price: product.price,
-            quantity: quantity,
-            affiliation: product.affiliation,
-            coupon: product.coupon,
-            discount: product.discount
-        }];
-
-        gtag('event', 'remove_from_cart', {
-            currency: product.currency,
-            value: value,
-            items: items
-        });
-    }
-    
-    /**
-     * Track view_cart event when cart section is visible
-     */
-    function trackViewCart() {
-        if (cart.length === 0) return;
-        
-        const items = cart.map(item => ({
-            item_id: item.item_id,
-            item_name: item.item_name,
-            item_brand: item.item_brand,
-            item_category: item.item_category,
-            item_category2: item.item_category2,
-            item_category3: item.item_category3,
-            item_variant: item.item_variant,
-            price: item.price,
-            quantity: item.quantity,
-            affiliation: item.affiliation,
-            coupon: item.coupon,
-            discount: item.discount
-        }));
-        
-        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        gtag('event', 'view_cart', {
-            currency: userPreferences.currency,
-            value: value,
-            items: items
-        });
-    }
-    
-    /**
-     * Track begin_checkout event
-     */
-    function trackBeginCheckout() {
-        const items = cart.map(item => ({
-            item_id: item.item_id,
-            item_name: item.item_name,
-            item_brand: item.item_brand,
-            item_category: item.item_category,
-            item_category2: item.item_category2,
-            item_category3: item.item_category3,
-            item_variant: item.item_variant,
-            price: item.price,
-            quantity: item.quantity,
-            affiliation: item.affiliation,
-            coupon: item.coupon,
-            discount: item.discount
-        }));
-        
-        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        gtag('event', 'begin_checkout', {
-            currency: userPreferences.currency,
-            value: value,
-            items: items
-        });
-    }
-    
-    /**
-     * Track add_shipping_info event
-     */
-    function trackAddShippingInfo() {
-        const items = cart.map(item => ({
-            item_id: item.item_id,
-            item_name: item.item_name,
-            item_brand: item.item_brand,
-            item_category: item.item_category,
-            item_category2: item.item_category2,
-            item_category3: item.item_category3,
-            item_variant: item.item_variant,
-            price: item.price,
-            quantity: item.quantity,
-            affiliation: item.affiliation,
-            coupon: item.coupon,
-            discount: item.discount
-        }));
-        
-        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        gtag('event', 'add_shipping_info', {
-            currency: userPreferences.currency,
-            value: value,
-            shipping_tier: 'Standard Ground',
-            items: items
-        });
-    }
-    
-    /**
-     * Track add_payment_info event
-     */
-    function trackAddPaymentInfo() {
-        const items = cart.map(item => ({
-            item_id: item.item_id,
-            item_name: item.item_name,
-            item_brand: item.item_brand,
-            item_category: item.item_category,
-            item_category2: item.item_category2,
-            item_category3: item.item_category3,
-            item_variant: item.item_variant,
-            price: item.price,
-            quantity: item.quantity,
-            affiliation: item.affiliation,
-            coupon: item.coupon,
-            discount: item.discount
-        }));
-        
-        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        gtag('event', 'add_payment_info', {
-            currency: userPreferences.currency,
-            value: value,
-            payment_type: 'Credit Card',
-            items: items
-        });
-    }
-    
-    /**
-     * Track purchase event
-     * @param {string} transactionId - Unique transaction ID
-     */
-    function trackPurchase(transactionId) {
-        const items = cart.map(item => ({
-            item_id: item.item_id,
-            item_name: item.item_name,
-            item_brand: item.item_brand,
-            item_category: item.item_category,
-            item_category2: item.item_category2,
-            item_category3: item.item_category3,
-            item_variant: item.item_variant,
-            price: item.price,
-            quantity: item.quantity,
-            affiliation: item.affiliation,
-            coupon: item.coupon,
-            discount: item.discount
-        }));
-        
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = 9.99;
-        const tax = subtotal * 0.08; // 8% tax
-        const total = subtotal + shipping + tax;
-
-        gtag('event', 'purchase', {
-            transaction_id: transactionId,
-            currency: userPreferences.currency,
-            value: total,
-            tax: tax,
-            shipping: shipping,
-            items: items
-        });
-    }
-    
-    /**
-     * Track refund event
-     * @param {string} transactionId - Transaction ID being refunded
-     * @param {Array} items - Items being refunded
-     * @param {number} value - Refund value
-     */
-    function trackRefund(transactionId, items, value) {
-        gtag('event', 'refund', {
-            currency: userPreferences.currency,
-            transaction_id: transactionId,
-            value: value,
-            items: items
-        });
-    }
-    
-    /**
-     * Track view_promotion event
-     * @param {Object} promotion - Promotion data
-     */
-    function trackViewPromotion(promotion) {
-        gtag('event', 'view_promotion', {
-            creative_name: promotion.creative_name,
-            creative_slot: promotion.creative_slot,
-            promotion_id: promotion.promotion_id,
-            promotion_name: promotion.promotion_name,
-            items: promotion.items
-        });
-    }
-    
-    /**
-     * Track select_promotion event
-     * @param {Object} promotion - Promotion data
-     */
-    function trackSelectPromotion(promotion) {
-        gtag('event', 'select_promotion', {
-            creative_name: promotion.creative_name,
-            creative_slot: promotion.creative_slot,
-            promotion_id: promotion.promotion_id,
-            promotion_name: promotion.promotion_name,
-            items: promotion.items
-        });
-    }
-    
-    /**
-     * Track generate_lead event for newsletter signup
-     * @param {string} email - User's email address
-     */
-    function trackGenerateLead(email) {
-        gtag('event', 'generate_lead', {
-            currency: userPreferences.currency,
-            value: 1,
-            lead_type: 'newsletter_signup',
-            email: email
-        });
-    }
-    
-    /**
-     * Track search event
-     * @param {string} searchTerm - Search term used
-     */
-    function trackSearch(searchTerm) {
-        gtag('event', 'search', {
-            search_term: searchTerm
-        });
-    }
-    
-    // ====================== CART MANAGEMENT ======================
-    
-    /**
-     * Add product to cart
-     * @param {HTMLElement} button - Add to cart button element
-     */
-    function addToCart(button) {
-        const productCard = button.closest('.product-card');
-        if (!productCard) {
-            console.error('Product card not found');
-            return;
+            gtag('event', 'remove_from_cart', {
+                currency: product.currency,
+                value: value,
+                items: items
+            });
         }
-        
-        const product = JSON.parse(productCard.dataset.product);
-        console.log('Adding product to cart:', product);
-        
-        // Track select_item event
-        trackSelectItem(product);
-        
-        // Track view_item event
-        trackViewItem(product);
-        
-        // Add to cart
-        const existingItem = cart.find(item => item.item_id === product.item_id);
-        const quantity = existingItem ? existingItem.quantity + 1 : 1;
-        
-        if (existingItem) {
-            existingItem.quantity = quantity;
-        } else {
-            cart.push({ ...product, quantity: quantity });
-        }
-        
-        console.log('Cart after adding item:', cart);
-        
-        // Track add_to_cart event
-        trackAddToCart(product, 1);
-        
-        // Update cart display
-        updateCartDisplay();
-        updateCartCount();
-        
-        // Show success feedback
-        showNotification(`${product.item_name} added to cart!`, 'success');
-    }
-    
-    /**
-     * Remove product from cart
-     * @param {string} itemId - ID of item to remove
-     */
-    function removeFromCart(itemId) {
-        const item = cart.find(i => i.item_id === itemId);
-        if (!item) return;
 
-        trackRemoveFromCart(item, item.quantity);
-        cart.splice(cart.indexOf(item), 1);
-        updateCartDisplay();
-        updateCartCount();
-        
-        showNotification(`${item.item_name} removed from cart`, 'info');
-    }
-    
-    // Make functions globally accessible
-    window.addToCart = addToCart;
-    window.removeFromCart = removeFromCart;
-    window.updateCartQuantity = updateCartQuantity;
-    window.navigateTo = navigateTo;
-    window.closePromotion = closePromotion;
-    
-    /**
-     * Update item quantity in cart
-     * @param {string} itemId - ID of item to update
-     * @param {number} newQuantity - New quantity
-     */
-    function updateCartQuantity(itemId, newQuantity) {
-        const item = cart.find(i => i.item_id === itemId);
-        if (!item) return;
-        
-        const oldQuantity = item.quantity;
-        item.quantity = Math.max(1, newQuantity);
-        
-        // Track quantity changes
-        if (oldQuantity !== item.quantity) {
-            const diff = item.quantity - oldQuantity;
-            if (diff > 0) {
-                trackAddToCart(item, diff);
-            } else {
-                trackRemoveFromCart(item, Math.abs(diff));
+        /**
+         * Track view_cart event when cart section is visible
+         */
+        function trackViewCart() {
+            if (cart.length === 0) return;
+
+            const items = cart.map(item => ({
+                item_id: item.item_id,
+                item_name: item.item_name,
+                item_brand: item.item_brand,
+                item_category: item.item_category,
+                item_category2: item.item_category2,
+                item_category3: item.item_category3,
+                item_variant: item.item_variant,
+                price: item.price,
+                quantity: item.quantity,
+                affiliation: item.affiliation,
+                coupon: item.coupon,
+                discount: item.discount
+            }));
+
+            const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            gtag('event', 'view_cart', {
+                currency: userPreferences.currency,
+                value: value,
+                items: items
+            });
+        }
+
+        /**
+         * Track begin_checkout event
+         */
+        function trackBeginCheckout() {
+            const items = cart.map(item => ({
+                item_id: item.item_id,
+                item_name: item.item_name,
+                item_brand: item.item_brand,
+                item_category: item.item_category,
+                item_category2: item.item_category2,
+                item_category3: item.item_category3,
+                item_variant: item.item_variant,
+                price: item.price,
+                quantity: item.quantity,
+                affiliation: item.affiliation,
+                coupon: item.coupon,
+                discount: item.discount
+            }));
+
+            const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            gtag('event', 'begin_checkout', {
+                currency: userPreferences.currency,
+                value: value,
+                items: items
+            });
+        }
+
+        /**
+         * Track add_shipping_info event
+         */
+        function trackAddShippingInfo() {
+            const items = cart.map(item => ({
+                item_id: item.item_id,
+                item_name: item.item_name,
+                item_brand: item.item_brand,
+                item_category: item.item_category,
+                item_category2: item.item_category2,
+                item_category3: item.item_category3,
+                item_variant: item.item_variant,
+                price: item.price,
+                quantity: item.quantity,
+                affiliation: item.affiliation,
+                coupon: item.coupon,
+                discount: item.discount
+            }));
+
+            const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            gtag('event', 'add_shipping_info', {
+                currency: userPreferences.currency,
+                value: value,
+                shipping_tier: 'Standard Ground',
+                items: items
+            });
+        }
+
+        /**
+         * Track add_payment_info event
+         */
+        function trackAddPaymentInfo() {
+            const items = cart.map(item => ({
+                item_id: item.item_id,
+                item_name: item.item_name,
+                item_brand: item.item_brand,
+                item_category: item.item_category,
+                item_category2: item.item_category2,
+                item_category3: item.item_category3,
+                item_variant: item.item_variant,
+                price: item.price,
+                quantity: item.quantity,
+                affiliation: item.affiliation,
+                coupon: item.coupon,
+                discount: item.discount
+            }));
+
+            const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            gtag('event', 'add_payment_info', {
+                currency: userPreferences.currency,
+                value: value,
+                payment_type: 'Credit Card',
+                items: items
+            });
+        }
+
+        /**
+         * Track purchase event
+         * @param {string} transactionId - Unique transaction ID
+         */
+        function trackPurchase(transactionId) {
+            const items = cart.map(item => ({
+                item_id: item.item_id,
+                item_name: item.item_name,
+                item_brand: item.item_brand,
+                item_category: item.item_category,
+                item_category2: item.item_category2,
+                item_category3: item.item_category3,
+                item_variant: item.item_variant,
+                price: item.price,
+                quantity: item.quantity,
+                affiliation: item.affiliation,
+                coupon: item.coupon,
+                discount: item.discount
+            }));
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 9.99;
+            const tax = subtotal * 0.08; // 8% tax
+            const total = subtotal + shipping + tax;
+
+            gtag('event', 'purchase', {
+                transaction_id: transactionId,
+                currency: userPreferences.currency,
+                value: total,
+                tax: tax,
+                shipping: shipping,
+                items: items
+            });
+        }
+
+        /**
+         * Track refund event
+         * @param {string} transactionId - Transaction ID being refunded
+         * @param {Array} items - Items being refunded
+         * @param {number} value - Refund value
+         */
+        function trackRefund(transactionId, items, value) {
+            gtag('event', 'refund', {
+                currency: userPreferences.currency,
+                transaction_id: transactionId,
+                value: value,
+                items: items
+            });
+        }
+
+        /**
+         * Track view_promotion event
+         * @param {Object} promotion - Promotion data
+         */
+        function trackViewPromotion(promotion) {
+            gtag('event', 'view_promotion', {
+                creative_name: promotion.creative_name,
+                creative_slot: promotion.creative_slot,
+                promotion_id: promotion.promotion_id,
+                promotion_name: promotion.promotion_name,
+                items: promotion.items
+            });
+        }
+
+        /**
+         * Track select_promotion event
+         * @param {Object} promotion - Promotion data
+         */
+        function trackSelectPromotion(promotion) {
+            gtag('event', 'select_promotion', {
+                creative_name: promotion.creative_name,
+                creative_slot: promotion.creative_slot,
+                promotion_id: promotion.promotion_id,
+                promotion_name: promotion.promotion_name,
+                items: promotion.items
+            });
+        }
+
+        /**
+         * Track generate_lead event for newsletter signup
+         * @param {string} email - User's email address
+         */
+        function trackGenerateLead(email) {
+            gtag('event', 'generate_lead', {
+                currency: userPreferences.currency,
+                value: 1,
+                lead_type: 'newsletter_signup',
+                email: email
+            });
+        }
+
+        /**
+         * Track search event
+         * @param {string} searchTerm - Search term used
+         */
+        function trackSearch(searchTerm) {
+            gtag('event', 'search', {
+                search_term: searchTerm
+            });
+        }
+
+        // ====================== CART MANAGEMENT ======================
+
+        /**
+         * Add product to cart
+         * @param {HTMLElement} button - Add to cart button element
+         */
+        function addToCart(button) {
+            const productCard = button.closest('.product-card');
+            if (!productCard) {
+                console.error('Product card not found');
+                return;
             }
+
+            const product = JSON.parse(productCard.dataset.product);
+            console.log('Adding product to cart:', product);
+
+            // Track select_item event
+            trackSelectItem(product);
+
+            // Track view_item event
+            trackViewItem(product);
+
+            // Add to cart
+            const existingItem = cart.find(item => item.item_id === product.item_id);
+            const quantity = existingItem ? existingItem.quantity + 1 : 1;
+
+            if (existingItem) {
+                existingItem.quantity = quantity;
+            } else {
+                cart.push({ ...product, quantity: quantity });
+            }
+
+            console.log('Cart after adding item:', cart);
+
+            // Track add_to_cart event
+            trackAddToCart(product, 1);
+
+            // Update cart display
+            updateCartDisplay();
+            updateCartCount();
+
+            // Show success feedback
+            showNotification(`${product.item_name} added to cart!`, 'success');
         }
-        
-        updateCartDisplay();
-    }
-    
-    /**
-     * Update cart display
-     */
-    function updateCartDisplay() {
-        const cartItems = $('#cart-items');
-        const cartSummary = $('#cart-summary');
-        
-        if (!cartItems) {
-            console.warn('Cart items container not found - cart may not be visible yet');
-            return;
+
+        /**
+         * Remove product from cart
+         * @param {string} itemId - ID of item to remove
+         */
+        function removeFromCart(itemId) {
+            const item = cart.find(i => i.item_id === itemId);
+            if (!item) return;
+
+            trackRemoveFromCart(item, item.quantity);
+            cart.splice(cart.indexOf(item), 1);
+            updateCartDisplay();
+            updateCartCount();
+
+            showNotification(`${item.item_name} removed from cart`, 'info');
         }
-        
-        console.log('Updating cart display. Cart length:', cart.length);
-        
-        if (cart.length === 0) {
-            cartItems.innerHTML = `
+
+        // Make functions globally accessible
+        window.addToCart = addToCart;
+        window.removeFromCart = removeFromCart;
+        window.updateCartQuantity = updateCartQuantity;
+        window.navigateTo = navigateTo;
+        window.closePromotion = closePromotion;
+
+        /**
+         * Update item quantity in cart
+         * @param {string} itemId - ID of item to update
+         * @param {number} newQuantity - New quantity
+         */
+        function updateCartQuantity(itemId, newQuantity) {
+            const item = cart.find(i => i.item_id === itemId);
+            if (!item) return;
+
+            const oldQuantity = item.quantity;
+            item.quantity = Math.max(1, newQuantity);
+
+            // Track quantity changes
+            if (oldQuantity !== item.quantity) {
+                const diff = item.quantity - oldQuantity;
+                if (diff > 0) {
+                    trackAddToCart(item, diff);
+                } else {
+                    trackRemoveFromCart(item, Math.abs(diff));
+                }
+            }
+
+            updateCartDisplay();
+        }
+
+        /**
+         * Update cart display
+         */
+        function updateCartDisplay() {
+            const cartItems = $('#cart-items');
+            const cartSummary = $('#cart-summary');
+
+            if (!cartItems) {
+                console.warn('Cart items container not found - cart may not be visible yet');
+                return;
+            }
+
+            console.log('Updating cart display. Cart length:', cart.length);
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
                 <div class="empty-cart">
                     <div class="empty-cart-icon">🛒</div>
                     <h3>Your cart is empty</h3>
@@ -906,16 +1015,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </button>
                 </div>
             `;
-            if (cartSummary) cartSummary.style.display = 'none';
-            return;
-        }
-        
-        // Calculate totals
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const total = subtotal;
-        
-        // Update cart items
-        const cartHTML = cart.map(item => `
+                if (cartSummary) cartSummary.style.display = 'none';
+                return;
+            }
+
+            // Calculate totals
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal;
+
+            // Update cart items
+            const cartHTML = cart.map(item => `
             <div class="cart-item">
                 <div class="item-details">
                     <h4>${item.item_name}</h4>
@@ -939,392 +1048,389 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
             </div>
         `).join('');
-        
-        console.log('Cart HTML:', cartHTML);
-        cartItems.innerHTML = cartHTML;
-        
-        // Update summary
-        if (cartSummary) {
-            cartSummary.style.display = 'block';
-            const subtotalEl = $('#cart-subtotal');
-            const totalEl = $('#cart-total');
-            
-            if (subtotalEl) subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+
+            console.log('Cart HTML:', cartHTML);
+            cartItems.innerHTML = cartHTML;
+
+            // Update summary
+            if (cartSummary) {
+                cartSummary.style.display = 'block';
+                const subtotalEl = $('#cart-subtotal');
+                const totalEl = $('#cart-total');
+
+                if (subtotalEl) subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+                if (totalEl) totalEl.textContent = `€${total.toFixed(2)}`;
+            }
+        }
+
+        /**
+         * Update cart count in header
+         */
+        function updateCartCount() {
+            const cartCount = $('#cart-count');
+            if (cartCount) {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCount.textContent = totalItems;
+                cartCount.style.display = totalItems > 0 ? 'inline' : 'none';
+            } else {
+                console.warn('Cart count element not found - header may not be ready yet');
+            }
+        }
+
+        /**
+         * Get emoji for product category
+         * @param {string} category - Product category
+         * @returns {string} - Emoji for category
+         */
+        function getProductEmoji(category) {
+            const emojis = {
+                'Smartphones': '📱',
+                'Laptops': '💻',
+                'Accessories': '🎧',
+                'Tablets': '📱',
+                'Wearables': '⌚'
+            };
+            return emojis[category] || '📦';
+        }
+
+        // ====================== CHECKOUT PROCESS ======================
+
+        /**
+         * Proceed to checkout
+         */
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!', 'warning');
+                return;
+            }
+
+            trackBeginCheckout();
+            navigateTo('checkout');
+            updateCheckoutDisplay();
+        }
+
+        /**
+         * Update checkout display
+         */
+        function updateCheckoutDisplay() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal;
+
+            // Update totals
+            const totalEl = $('#checkout-final-total');
+
             if (totalEl) totalEl.textContent = `€${total.toFixed(2)}`;
         }
-    }
-    
-    /**
-     * Update cart count in header
-     */
-    function updateCartCount() {
-        const cartCount = $('#cart-count');
-        if (cartCount) {
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = totalItems;
-            cartCount.style.display = totalItems > 0 ? 'inline' : 'none';
-        } else {
-            console.warn('Cart count element not found - header may not be ready yet');
-        }
-    }
-    
-    /**
-     * Get emoji for product category
-     * @param {string} category - Product category
-     * @returns {string} - Emoji for category
-     */
-    function getProductEmoji(category) {
-        const emojis = {
-            'Smartphones': '📱',
-            'Laptops': '💻',
-            'Accessories': '🎧',
-            'Tablets': '📱',
-            'Wearables': '⌚'
-        };
-        return emojis[category] || '📦';
-    }
-    
-    // ====================== CHECKOUT PROCESS ======================
-    
-    /**
-     * Proceed to checkout
-     */
-    function proceedToCheckout() {
-        if (cart.length === 0) {
-            showNotification('Your cart is empty!', 'warning');
-            return;
-        }
-        
-        trackBeginCheckout();
-        navigateTo('checkout');
-        updateCheckoutDisplay();
-    }
-    
-    /**
-     * Update checkout display
-     */
-    function updateCheckoutDisplay() {
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const total = subtotal;
-        
-        // Update totals
-        const totalEl = $('#checkout-final-total');
-        
-        if (totalEl) totalEl.textContent = `€${total.toFixed(2)}`;
-    }
-    
-    /**
-     * Handle checkout form submission
-     */
-    function handleCheckoutSubmit(event) {
-        event.preventDefault();
-        
-        // Validate form
-        if (!validateCheckoutForm()) {
-            return;
-        }
-        
-        // Track shipping info
-        trackAddShippingInfo();
-        
-        // Track payment info
-        trackAddPaymentInfo();
-        
-        // Generate transaction ID
-        const transactionId = 'TXN_' + Date.now();
-        
-        // Track purchase
-        trackPurchase(transactionId);
-        
-        // Show order confirmation
-        showOrderConfirmation(transactionId);
-        
-        // Clear cart
-        cart.length = 0;
-        updateCartDisplay();
-        updateCartCount();
-        
-        // Reset form
-        event.target.reset();
-    }
-    
-    /**
-     * Validate checkout form
-     * @returns {boolean} - True if form is valid
-     */
-    function validateCheckoutForm() {
-        const requiredFields = [
-            'first-name', 'last-name', 'email', 'address', 'city', 'zip'
-        ];
-        
-        const missingFields = requiredFields.filter(fieldId => {
-            const field = $(fieldId);
-            return !field || !field.value.trim();
-        });
-        
-        if (missingFields.length > 0) {
-            showNotification(`Please fill in all required fields: ${missingFields.join(', ')}`, 'error');
-            return false;
-        }
-        
-        // Validate email
-        const email = $('#email').value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showNotification('Please enter a valid email address', 'error');
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Show order confirmation
-     * @param {string} transactionId - Transaction ID
-     */
-    function showOrderConfirmation(transactionId) {
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const total = subtotal;
-        
-        const orderDetails = $('#order-details');
-        if (orderDetails) {
-            orderDetails.innerHTML = `
-                <div class="order-info">
-                    <h3>Order Details</h3>
-                    <p><strong>Order ID:</strong> ${transactionId}</p>
-                    <p><strong>Total:</strong> €${total.toFixed(2)}</p>
-                    <p><strong>Items:</strong> ${cart.length} products</p>
-                    <p><strong>Customer:</strong> ${$('#first-name').value} ${$('#last-name').value}</p>
-                    <p><strong>Email:</strong> ${$('#email').value}</p>
-                    <p><strong>Shipping to:</strong> ${$('#city').value}, ${$('#zip').value}</p>
-                </div>
-            `;
-        }
-        
-        navigateTo('order-confirmation');
-    }
-    
-    // ====================== NEWSLETTER FUNCTIONALITY ======================
-    
-    /**
-     * Handle newsletter subscription
-     */
-    function handleNewsletterSubmit(event) {
-        event.preventDefault();
-        
-        const email = $('#newsletter-email').value.trim();
-        if (!email || !validateEmail(email)) {
-            showNotification('Please enter a valid email address', 'error');
-            return;
-        }
-        
-        // Track lead generation
-        trackGenerateLead(email);
-        
-        // Clear form
-        $('#newsletter-email').value = '';
-        
-        showNotification('Thank you for subscribing! You will receive updates soon.', 'success');
-    }
-    
-    /**
-     * Validate email format
-     * @param {string} email - Email to validate
-     * @returns {boolean} - True if email is valid
-     */
-    function validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-    
-    // ====================== PROMOTION TRACKING ======================
-    
-    /**
-     * Track promotion view
-     */
-    function trackPromotionView() {
-        const promotion = {
-            creative_name: 'Summer Sale Banner',
-            creative_slot: 'header_banner',
-            promotion_id: 'SUMMER_SALE_2024',
-            promotion_name: 'Summer Sale - Up to 50% Off',
-            items: cart.map(item => ({
-                item_id: item.item_id,
-                item_name: item.item_name,
-                item_brand: item.item_brand,
-                item_category: item.item_category,
-                price: item.price,
-                quantity: item.quantity
-            }))
-        };
-        
-        trackViewPromotion(promotion);
-    }
-    
-    /**
-     * Close promotion banner
-     */
-    function closePromotion() {
-        const banner = $('#promotion-banner');
-        if (banner) {
-            banner.style.display = 'none';
-        }
-    }
-    
-    // ====================== PRODUCT FILTERING ======================
-    
-    /**
-     * Filter products by category
-     * @param {string} category - Category to filter by
-     */
-    function filterProducts(category) {
-        const products = document.querySelectorAll('.product-card');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        
-        // Update active filter button
-        filterButtons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.category === category) {
-                btn.classList.add('active');
+
+        /**
+         * Handle checkout form submission
+         */
+        function handleCheckoutSubmit(event) {
+            event.preventDefault();
+
+            // Validate form
+            if (!validateCheckoutForm()) {
+                return;
             }
-        });
-        
-        // Filter products
-        products.forEach(product => {
-            const productCategory = JSON.parse(product.dataset.product).item_category.toLowerCase();
-            if (category === 'all' || productCategory.includes(category.toLowerCase())) {
-                product.style.display = 'block';
-            } else {
-                product.style.display = 'none';
+
+            // Track shipping info
+            trackAddShippingInfo();
+
+            // Track payment info
+            trackAddPaymentInfo();
+
+            // Generate transaction ID
+            const transactionId = 'TXN_' + Date.now();
+
+            // Track purchase
+            trackPurchase(transactionId);
+
+            // Show order confirmation
+            showOrderConfirmation(transactionId);
+
+            // Clear cart
+            cart.length = 0;
+            updateCartDisplay();
+            updateCartCount();
+
+            // Reset form
+            event.target.reset();
+        }
+
+        /**
+         * Validate checkout form
+         * @returns {boolean} - True if form is valid
+         */
+        function validateCheckoutForm() {
+            const requiredFields = [
+                'first-name', 'last-name', 'email', 'address', 'city', 'zip'
+            ];
+
+            const missingFields = requiredFields.filter(fieldId => {
+                const field = $(fieldId);
+                return !field || !field.value.trim();
+            });
+
+            if (missingFields.length > 0) {
+                showNotification(`Please fill in all required fields: ${missingFields.join(', ')}`, 'error');
+                return false;
             }
-        });
-        
-        // Track search/filter event
-        trackSearch(category === 'all' ? 'all products' : category);
-    }
-    
-    // ====================== NOTIFICATION SYSTEM ======================
-    
-    /**
-     * Show notification to user
-     * @param {string} message - Notification message
-     * @param {string} type - Notification type (success, error, warning, info)
-     */
-    function showNotification(message, type = 'info') {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
+
+            // Validate email
+            const email = $('#email').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Show order confirmation
+         * @param {string} transactionId - Transaction ID
+         */
+        function showOrderConfirmation(transactionId) {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal;
+
+            // Store order data in localStorage for the thank you page
+            const orderData = {
+                transactionId: transactionId,
+                total: total,
+                itemCount: cart.length,
+                customer: {
+                    firstName: $('#first-name').value,
+                    lastName: $('#last-name').value,
+                    email: $('#email').value,
+                    city: $('#city').value,
+                    zip: $('#zip').value
+                },
+                items: [...cart] // Copy cart items
+            };
+
+            localStorage.setItem('orderConfirmation', JSON.stringify(orderData));
+
+            // Redirect to thank you page using URL parameter
+            window.location.href = 'index.html?page=thank-you';
+        }
+
+        // ====================== NEWSLETTER FUNCTIONALITY ======================
+
+        /**
+         * Handle newsletter subscription
+         */
+        function handleNewsletterSubmit(event) {
+            event.preventDefault();
+
+            const email = $('#newsletter-email').value.trim();
+            if (!email || !validateEmail(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Track lead generation
+            trackGenerateLead(email);
+
+            // Clear form
+            $('#newsletter-email').value = '';
+
+            showNotification('Thank you for subscribing! You will receive updates soon.', 'success');
+        }
+
+        /**
+         * Validate email format
+         * @param {string} email - Email to validate
+         * @returns {boolean} - True if email is valid
+         */
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // ====================== PROMOTION TRACKING ======================
+
+        /**
+         * Track promotion view
+         */
+        function trackPromotionView() {
+            const promotion = {
+                creative_name: 'Summer Sale Banner',
+                creative_slot: 'header_banner',
+                promotion_id: 'SUMMER_SALE_2024',
+                promotion_name: 'Summer Sale - Up to 50% Off',
+                items: cart.map(item => ({
+                    item_id: item.item_id,
+                    item_name: item.item_name,
+                    item_brand: item.item_brand,
+                    item_category: item.item_category,
+                    price: item.price,
+                    quantity: item.quantity
+                }))
+            };
+
+            trackViewPromotion(promotion);
+        }
+
+        /**
+         * Close promotion banner
+         */
+        function closePromotion() {
+            const banner = $('#promotion-banner');
+            if (banner) {
+                banner.style.display = 'none';
+            }
+        }
+
+        // ====================== PRODUCT FILTERING ======================
+
+        /**
+         * Filter products by category
+         * @param {string} category - Category to filter by
+         */
+        function filterProducts(category) {
+            const products = document.querySelectorAll('.product-card');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+
+            // Update active filter button
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter products
+            products.forEach(product => {
+                const productCategory = JSON.parse(product.dataset.product).item_category.toLowerCase();
+                if (category === 'all' || productCategory.includes(category.toLowerCase())) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+
+            // Track search/filter event
+            trackSearch(category === 'all' ? 'all products' : category);
+        }
+
+        // ====================== NOTIFICATION SYSTEM ======================
+
+        /**
+         * Show notification to user
+         * @param {string} message - Notification message
+         * @param {string} type - Notification type (success, error, warning, info)
+         */
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
             <div class="notification-content">
                 <span class="notification-message">${message}</span>
                 <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
             </div>
         `;
-        
-        // Add to page
-        document.body.appendChild(notification);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
-        }, 5000);
-    }
-    
-    // ====================== INITIALIZATION ======================
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // Navigation event listeners
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetSection = this.getAttribute('href').slice(1);
-                navigateTo(targetSection);
-            });
-        });
-        
-        // Product filter event listeners
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                filterProducts(this.dataset.category);
-            });
-        });
-        
-        // Product card click handlers for view_item tracking
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                if (!e.target.classList.contains('add-to-cart-btn')) {
-                    const product = JSON.parse(this.dataset.product);
-                    trackViewItem(product);
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
                 }
+            }, 5000);
+        }
+
+        // ====================== INITIALIZATION ======================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Navigation event listeners
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetSection = this.getAttribute('href').slice(1);
+                    navigateTo(targetSection);
+                });
             });
+
+            // Product filter event listeners
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    filterProducts(this.dataset.category);
+                });
+            });
+
+            // Product card click handlers for view_item tracking
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', function (e) {
+                    if (!e.target.classList.contains('add-to-cart-btn')) {
+                        const product = JSON.parse(this.dataset.product);
+                        trackViewItem(product);
+                    }
+                });
+            });
+
+            // Intersection Observer for view_item_list tracking
+            const productObserver = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    trackViewItemList();
+                    productObserver.unobserve(entries[0].target);
+                }
+            }, { threshold: 0.3 });
+
+            const productsSection = $('#products');
+            if (productsSection) {
+                productObserver.observe(productsSection);
+            }
+
+            // Cart view tracking
+            const cartObserver = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting && cart.length > 0) {
+                    trackViewCart();
+                    cartObserver.unobserve(entries[0].target);
+                }
+            }, { threshold: 0.5 });
+
+            const cartSection = $('#cart');
+            if (cartSection) {
+                cartObserver.observe(cartSection);
+            }
+
+            // Promotion view tracking
+            const promotionObserver = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    trackPromotionView();
+                    promotionObserver.unobserve(entries[0].target);
+                }
+            }, { threshold: 0.5 });
+
+            const promotionBanner = $('#promotion-banner');
+            if (promotionBanner) {
+                promotionObserver.observe(promotionBanner);
+            }
+
+            // Form event listeners
+            const checkoutForm = $('#checkout-form');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', handleCheckoutSubmit);
+            }
+
+            const newsletterForm = $('#newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', handleNewsletterSubmit);
+            }
+
+            // Handle URL routing
+            handleUrlRouting();
+
+            // Initialize cart display
+            updateCartDisplay();
+            updateCartCount();
         });
-        
-        // Intersection Observer for view_item_list tracking
-        const productObserver = new IntersectionObserver(function(entries) {
-            if (entries[0].isIntersecting) {
-                trackViewItemList();
-                productObserver.unobserve(entries[0].target);
-            }
-        }, { threshold: 0.3 });
-        
-        const productsSection = $('#products');
-        if (productsSection) {
-            productObserver.observe(productsSection);
-        }
-        
-        // Cart view tracking
-        const cartObserver = new IntersectionObserver(function(entries) {
-            if (entries[0].isIntersecting && cart.length > 0) {
-                trackViewCart();
-                cartObserver.unobserve(entries[0].target);
-            }
-        }, { threshold: 0.5 });
-        
-        const cartSection = $('#cart');
-        if (cartSection) {
-            cartObserver.observe(cartSection);
-        }
-        
-        // Promotion view tracking
-        const promotionObserver = new IntersectionObserver(function(entries) {
-            if (entries[0].isIntersecting) {
-                trackPromotionView();
-                promotionObserver.unobserve(entries[0].target);
-            }
-        }, { threshold: 0.5 });
-        
-        const promotionBanner = $('#promotion-banner');
-        if (promotionBanner) {
-            promotionObserver.observe(promotionBanner);
-        }
-        
-        // Form event listeners
-        const checkoutForm = $('#checkout-form');
-        if (checkoutForm) {
-            checkoutForm.addEventListener('submit', handleCheckoutSubmit);
-        }
-        
-        const newsletterForm = $('#newsletter-form');
-        if (newsletterForm) {
-            newsletterForm.addEventListener('submit', handleNewsletterSubmit);
-        }
-        
-        // Show home section by default
-        const homeSection = $('#home');
-        if (homeSection) {
-            homeSection.style.display = 'block';
-            homeSection.classList.add('active');
-        }
-        
-        // Initialize cart display
-        updateCartDisplay();
-        updateCartCount();
-        
-        // Track initial page view
-        trackPageView('home');
-    });
     </script>
 </body>
+
 </html>
