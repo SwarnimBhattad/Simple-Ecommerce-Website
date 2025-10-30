@@ -3,348 +3,1315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad Tracking Demo – Full E-commerce Flow</title>
+    <title>TechStore Pro - GA4 E-commerce Demo</title>
     <link rel="stylesheet" href="styles.css">
-
-    <!-- ====================== GOOGLE TAG MANAGER ====================== -->
-    <script>(function(w,d,s,l,i){
-        w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-        var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-        j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-        f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-N8N8QH73');</script>
-
-    <!-- ====================== gtag.js (GA4) ====================== -->
-    <!-- REPLACE G-XXXXXXXXXX WITH YOUR GA4 MEASUREMENT ID -->
+    
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- ====================== GOOGLE ANALYTICS 4 (GA4) ====================== -->
+    <!-- Replace G-XXXXXXXXXX with your actual GA4 Measurement ID -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-23GMWNMGG0"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      // DEBUG MODE – REMOVE BEFORE PRODUCTION
-      gtag('config', 'G-23GMWNMGG0', { debug_mode: true });
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        // Configure GA4 with enhanced e-commerce settings
+        gtag('config', 'G-23GMWNMGG0', { 
+            debug_mode: true, // Remove in production
+            enhanced_ecommerce: true,
+            send_page_view: true,
+            custom_map: {
+                'custom_parameter_1': 'user_type',
+                'custom_parameter_2': 'loyalty_tier'
+            }
+        });
     </script>
 </head>
 <body>
-
-<!-- GTM noscript -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8N8QH73"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-
-<!-- ====================== LANDING ====================== -->
-<div id="landing" class="section">
-    <h1 class="main-title">Full E-commerce Tracking Demo</h1>
-    <h2 class="welcome-title">Explore Products & Buy</h2>
-    <nav>
-        <a href="#products">View Products</a>
-        <a href="#cart">View Cart</a>
-        <a href="#newsletter">Subscribe</a>
-    </nav>
-</div>
-
-<!-- ====================== PRODUCTS ====================== -->
-<div id="products" class="section" style="display:none;">
-    <h1>Products</h1>
-    <div class="products-grid">
-
-        <!-- Product 1: Oral-Zahnbürste -->
-        <div class="item-block" data-product='{
-            "item_id":"001","item_name":"Oral-Zahnbürste","item_brand":"Oral-B",
-            "item_category":"Hygiene","price":5,"currency":"EUR"
-        }'>
-            <h3>Oral-Zahnbürste</h3>
-            <p class="price">€5</p>
-            <p>Oral-B • Blue</p>
-        </div>
-
-        <!-- Product 2: Electric Razor (Philips) -->
-        <div class="item-block" data-product='{
-            "item_id":"002","item_name":"Electric Razor","item_brand":"Philips",
-            "item_category":"Personal Care","price":15,"currency":"EUR"
-        }'>
-            <h3>Electric Razor</h3>
-            <p class="price">€15</p>
-            <p>Philips • Black</p>
-        </div>
-
-        <!-- Product 3: Hair Dryer (Dyson) -->
-        <div class="item-block" data-product='{
-            "item_id":"003","item_name":"Hair Dryer","item_brand":"Dyson",
-            "item_category":"Personal Care","price":10,"currency":"EUR"
-        }'>
-            <h3>Hair Dryer</h3>
-            <p class="price">€10</p>
-            <p>Dyson • White</p>
-        </div>
-    </div>
-</div>
-
-<!-- ====================== CART ====================== -->
-<div id="cart" class="section" style="display:none;">
-    <h1>Your Cart</h1>
-    <div id="cart-items" class="cart-container"></div>
-    <div id="cart-total" class="cart-total" style="display:none;">
-        <h3>Total: €<span id="total-amount">0.00</span></h3>
-    </div>
-    <button id="proceed-checkout" style="display:none;">Proceed to Checkout</button>
-</div>
-
-<!-- ====================== CHECKOUT ====================== -->
-<div id="checkout" class="section" style="display:none;">
-    <h1>Checkout</h1>
-    <div class="checkout-form">
-        <input type="text" id="firstName" placeholder="First Name" required>
-        <input type="text" id="lastName"  placeholder="Last Name"  required>
-        <input type="text" id="country"   placeholder="Country"   required>
-        <div id="checkout-total" class="checkout-total">
-            Total: €<span id="checkout-total-amount">0.00</span>
-        </div>
-        <button id="purchase">Finish Purchase</button>
-    </div>
-</div>
-
-<!-- ====================== NEWSLETTER ====================== -->
-<div id="newsletter" class="section" style="display:none;">
-    <h1 class="newsletter-title">Subscribe</h1>
-    <input type="email" id="newsletter-email" placeholder="Your email">
-    <button id="subscribe">Subscribe</button>
-</div>
-
-<!-- ====================== THANK YOU ====================== -->
-<div id="thankyou" class="section" style="display:none;">
-    <h1>Thank You!</h1>
-    <div id="order-details" class="order-summary"></div>
-</div>
-
-<script>
-/* ============================================================== 
-   GLOBAL STATE
-   ============================================================== */
-const cart = [];
-const $ = id => document.getElementById(id);
-
-/* ============================================================== 
-   NAVIGATION
-   ============================================================== */
-function showSection(id){
-    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-    $(id).style.display='block';
-    window.scrollTo({top:0,behavior:'smooth'});
-}
-function navigateTo(id){
-    showSection(id);
-    history.pushState({section:id},'', '#'+id);
-}
-window.addEventListener('popstate', e=>{
-    const sec = e.state?.section || 'landing';
-    showSection(sec);
-});
-
-/* ============================================================== 
-   MAIN FUNCTIONAL LOGIC (runs after DOM is ready)
-   ============================================================== */
-document.addEventListener('DOMContentLoaded', ()=>{
-
-    /* Navigation Links */
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-        a.addEventListener('click', e=>{
-            e.preventDefault();
-            navigateTo(a.getAttribute('href').slice(1));
-        });
-    });
-
-    /* 1. view_item_list – when product section is visible */
-    const productObserver = new IntersectionObserver(entries=>{
-        if(entries[0].isIntersecting){
-            const items = Array.from(document.querySelectorAll('.item-block')).map(el=>{
-                const p = JSON.parse(el.dataset.product);
-                return {
-                    item_id: p.item_id,
-                    item_name: p.item_name,
-                    item_brand: p.item_brand,
-                    item_category: p.item_category,
-                    price: p.price,
-                    quantity: 1
-                };
-            });
-
-            gtag('event', 'view_item_list', {
-                item_list_id: 'main_list',
-                item_list_name: 'Main Product List',
-                items
-            });
-
-            dataLayer.push({ event: 'view_item_list', ecommerce: { items } });
-            productObserver.unobserve(entries[0].target);
-        }
-    }, { threshold: 0.3 });
-
-    const prod = $('#products');
-    if(prod) productObserver.observe(prod);
-
-    /* 2. ADD TO CART */
-    document.querySelectorAll('.item-block').forEach(block=>{
-        block.addEventListener('click', ()=>{
-            const p = JSON.parse(block.dataset.product);
-            const existing = cart.find(i=>i.item_id===p.item_id);
-            const qty = existing ? existing.quantity + 1 : 1;
-            if(existing) existing.quantity = qty;
-            else cart.push({ ...p, quantity: qty });
-
-            const value = p.price * qty;
-            const items = [{ ...p, quantity: qty }];
-
-            gtag('event', 'add_to_cart', { currency: 'EUR', value, items });
-            dataLayer.push({ event: 'add_to_cart', ecommerce: { currency:'EUR', value, items } });
-
-            updateCart();
-            navigateTo('cart');
-        });
-    });
-
-    /* 3. CART DISPLAY + view_cart */
-    function updateCart(){
-        const container = $('#cart-items');
-        const totalEl = $('#total-amount');
-        const btn = $('#proceed-checkout');
-
-        if(cart.length===0){
-            container.innerHTML = '<p class="placeholder">Cart is empty</p>';
-            $('#cart-total').style.display='none';
-            btn.style.display='none';
-            return;
-        }
-
-        const total = cart.reduce((s,i)=>s + i.price*i.quantity,0);
-        totalEl.textContent = total.toFixed(2);
-        $('#checkout-total-amount').textContent = total.toFixed(2);
-        $('#cart-total').style.display='block';
-        btn.style.display='block';
-
-        container.innerHTML = cart.map(item=>`
-            <div class="cart-item">
-                <div>
-                    <h4>${item.item_name}</h4>
-                    <p>€${item.price.toFixed(2)} × ${item.quantity}</p>
+    <!-- ====================== SIMPLE HEADER ====================== -->
+    <header class="header">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>TechStore</h1>
                 </div>
-                <div>
-                    <input type="number" min="1" value="${item.quantity}"
-                           onchange="updateQty('${item.item_id}',this.value)">
-                    <button onclick="removeItem('${item.item_id}')">Remove</button>
+                <div class="nav-links">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#products" class="nav-link">Products</a>
+                    <a href="#cart" class="nav-link cart-link">
+                        Cart <span id="cart-count" class="cart-count">0</span>
+                    </a>
                 </div>
-            </div>`).join('');
+            </div>
+        </nav>
+    </header>
+
+    <!-- ====================== HERO SECTION ====================== -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to TechStore</h1>
+            <p class="hero-subtitle">Quality electronics at great prices</p>
+            <button class="cta-button" onclick="navigateTo('products')">
+                Shop Now
+            </button>
+        </div>
+    </section>
+
+    <!-- ====================== PRODUCTS SECTION ====================== -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Products</h2>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="products-grid">
+                
+                <!-- Product 1: iPhone 15 Pro -->
+                <div class="product-card" data-product='{
+                    "item_id":"IPHONE15PRO",
+                    "item_name":"iPhone 15 Pro",
+                    "item_brand":"Apple",
+                    "item_category":"Smartphones",
+                    "item_category2":"Premium",
+                    "item_category3":"iOS",
+                    "item_variant":"Natural Titanium",
+                    "price":999.99,
+                    "currency":"USD",
+                    "affiliation":"TechStore",
+                    "coupon":"SUMMER2024",
+                    "discount":50.00,
+                    "item_list_id":"featured_products",
+                    "item_list_name":"Featured Products",
+                    "index":0
+                }'>
+                    <div class="product-image">
+                        <div class="product-emoji">📱</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">iPhone 15 Pro</h3>
+                        <p class="product-brand">Apple</p>
+                        <div class="product-price">
+                            <span class="current-price">€999.99</span>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(this)">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 2: MacBook Pro M3 -->
+                <div class="product-card" data-product='{
+                    "item_id":"MACBOOKPRO_M3",
+                    "item_name":"MacBook Pro 16-inch M3",
+                    "item_brand":"Apple",
+                    "item_category":"Laptops",
+                    "item_category2":"Professional",
+                    "item_category3":"macOS",
+                    "item_variant":"Space Gray",
+                    "price":2499.99,
+                    "currency":"USD",
+                    "affiliation":"TechStore",
+                    "coupon":"PRO2024",
+                    "discount":200.00,
+                    "item_list_id":"featured_products",
+                    "item_list_name":"Featured Products",
+                    "index":1
+                }'>
+                    <div class="product-image">
+                        <div class="product-emoji">💻</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">MacBook Pro 16-inch M3</h3>
+                        <p class="product-brand">Apple</p>
+                        <div class="product-price">
+                            <span class="current-price">€2,499.99</span>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(this)">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 3: AirPods Pro 2nd Gen -->
+                <div class="product-card" data-product='{
+                    "item_id":"AIRPODS_PRO_2",
+                    "item_name":"AirPods Pro (2nd generation)",
+                    "item_brand":"Apple",
+                    "item_category":"Accessories",
+                    "item_category2":"Audio",
+                    "item_category3":"Wireless",
+                    "item_variant":"White",
+                    "price":249.99,
+                    "currency":"USD",
+                    "affiliation":"TechStore",
+                    "coupon":"AUDIO2024",
+                    "discount":25.00,
+                    "item_list_id":"featured_products",
+                    "item_list_name":"Featured Products",
+                    "index":2
+                }'>
+                    <div class="product-image">
+                        <div class="product-emoji">🎧</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">AirPods Pro (2nd gen)</h3>
+                        <p class="product-brand">Apple</p>
+                        <div class="product-price">
+                            <span class="current-price">€249.99</span>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(this)">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 4: Apple Watch Series 9 -->
+                <div class="product-card" data-product='{
+                    "item_id":"APPLE_WATCH_S9",
+                    "item_name":"Apple Watch Series 9",
+                    "item_brand":"Apple",
+                    "item_category":"Accessories",
+                    "item_category2":"Wearables",
+                    "item_category3":"Smartwatch",
+                    "item_variant":"Midnight",
+                    "price":399.99,
+                    "currency":"USD",
+                    "affiliation":"TechStore",
+                    "coupon":"WEARABLE2024",
+                    "discount":30.00,
+                    "item_list_id":"featured_products",
+                    "item_list_name":"Featured Products",
+                    "index":3
+                }'>
+                    <div class="product-image">
+                        <div class="product-emoji">⌚</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Apple Watch Series 9</h3>
+                        <p class="product-brand">Apple</p>
+                        <div class="product-price">
+                            <span class="current-price">€399.99</span>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(this)">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 5: iPad Pro M2 -->
+                <div class="product-card" data-product='{
+                    "item_id":"IPAD_PRO_M2",
+                    "item_name":"iPad Pro 12.9-inch M2",
+                    "item_brand":"Apple",
+                    "item_category":"Tablets",
+                    "item_category2":"Professional",
+                    "item_category3":"iPadOS",
+                    "item_variant":"Space Gray",
+                    "price":1099.99,
+                    "currency":"USD",
+                    "affiliation":"TechStore",
+                    "coupon":"TABLET2024",
+                    "discount":100.00,
+                    "item_list_id":"featured_products",
+                    "item_list_name":"Featured Products",
+                    "index":4
+                }'>
+                    <div class="product-image">
+                        <div class="product-emoji">📱</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">iPad Pro 12.9-inch M2</h3>
+                        <p class="product-brand">Apple</p>
+                        <div class="product-price">
+                            <span class="current-price">€1,099.99</span>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(this)">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================== SHOPPING CART SECTION ====================== -->
+    <section id="cart" class="cart-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Your Cart</h2>
+            </div>
+            
+            <div class="cart-container">
+                <div id="cart-items" class="cart-items">
+                    <div class="empty-cart">
+                        <div class="empty-cart-icon">🛒</div>
+                        <h3>Your cart is empty</h3>
+                        <button class="cta-button" onclick="navigateTo('products')">
+                            Continue Shopping
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="cart-summary" class="cart-summary" style="display: none;">
+                    <div class="summary-details">
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="cart-total">€0.00</span>
+                        </div>
+                    </div>
+                    <div class="summary-actions">
+                        <button class="checkout-btn" onclick="proceedToCheckout()">
+                            Checkout
+                        </button>
+                        <button class="continue-shopping-btn" onclick="navigateTo('products')">
+                            Continue Shopping
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================== CHECKOUT SECTION ====================== -->
+    <section id="checkout" class="checkout-section">
+        <div class="container">
+            <div class="checkout-container">
+                <h2>Checkout</h2>
+                <form id="checkout-form" class="checkout-form">
+                    <div class="form-group">
+                        <input type="text" id="first-name" placeholder="First Name" required>
+                        <input type="text" id="last-name" placeholder="Last Name" required>
+                    </div>
+                    <input type="email" id="email" placeholder="Email Address" required>
+                    <input type="text" id="address" placeholder="Address" required>
+                    <div class="form-group">
+                        <input type="text" id="city" placeholder="City" required>
+                        <input type="text" id="zip" placeholder="ZIP Code" required>
+                    </div>
+                    
+                    <div class="checkout-total">
+                        <div class="total-row final-total">
+                            <span>Total:</span>
+                            <span id="checkout-final-total">€0.00</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="place-order-btn">
+                        Place Order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================== ORDER CONFIRMATION SECTION ====================== -->
+    <section id="order-confirmation" class="order-confirmation-section">
+        <div class="container">
+            <div class="confirmation-container">
+                <div class="success-icon">✅</div>
+                <h2>Order Confirmed!</h2>
+                <p>Thank you for your purchase.</p>
+                <div id="order-details" class="order-details"></div>
+                <button class="cta-button" onclick="navigateTo('products')">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    /* ============================================================== 
+       TECHSTORE PRO - GA4 E-COMMERCE DEMO
+       Comprehensive Google Analytics 4 E-commerce Implementation
+       ============================================================== */
+    
+    // ====================== GLOBAL STATE ======================
+    const cart = [];
+    const userPreferences = {
+        currency: 'EUR',
+        userType: 'new_customer',
+        loyaltyTier: 'bronze'
+    };
+    
+    // Helper function to get DOM elements with error handling
+    const $ = id => {
+        // Remove # if present in the id
+        const cleanId = id.replace('#', '');
+        const element = document.getElementById(cleanId);
+        if (!element) {
+            console.warn(`Element with id '${cleanId}' not found`);
+        }
+        return element;
+    };
+    
+    // ====================== UTILITY FUNCTIONS ======================
+    
+    /**
+     * Check if required elements are available
+     * @returns {boolean} - True if all elements are available
+     */
+    function checkRequiredElements() {
+        const requiredElements = [
+            'cart-items', 'cart-summary', 'cart-count', 'home', 
+            'products', 'cart', 'checkout-form'
+        ];
+        
+        const missingElements = requiredElements.filter(id => !document.getElementById(id));
+        
+        if (missingElements.length > 0) {
+            console.warn('Missing required elements:', missingElements);
+            return false;
+        }
+        
+        return true;
     }
-
-    window.updateQty = (id, val)=>{
-        const item = cart.find(i=>i.item_id===id);
-        if(item) item.quantity = Math.max(1, parseInt(val)||1);
-        updateCart();
-    };
-
-    window.removeItem = id=>{
-        const item = cart.find(i=>i.item_id===id);
-        if(!item) return;
-
-        const value = item.price * item.quantity;
-        const items = [{ ...item }];
-
-        gtag('event', 'remove_from_cart', { currency: 'EUR', value, items });
-        dataLayer.push({ event: 'remove_from_cart', ecommerce: { currency:'EUR', value, items } });
-
-        cart.splice(cart.indexOf(item),1);
-        updateCart();
-
-        if(cart.length===0) navigateTo('landing');
-    };
-
-    const cartObserver = new IntersectionObserver(entries=>{
-        if(entries[0].isIntersecting && cart.length>0){
-            const items = cart.map(i=>({...i}));
-            const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
-
-            gtag('event', 'view_cart', { currency: 'EUR', value, items });
-            dataLayer.push({ event: 'view_cart', ecommerce: { currency:'EUR', value, items } });
-            cartObserver.unobserve(entries[0].target);
+    
+    /**
+     * Navigate to a specific section
+     * @param {string} sectionId - ID of the section to navigate to
+     */
+    function navigateTo(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('active');
+        });
+        
+        // Show target section
+        const targetSection = $(sectionId);
+        if (targetSection) {
+            targetSection.style.display = 'block';
+            targetSection.classList.add('active');
+            
+            // Scroll to top of page first, then to section
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Small delay to ensure smooth transition
+            setTimeout(() => {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
         }
-    }, { threshold: 0.5 });
+        
+        // Track page view
+        trackPageView(sectionId);
+    }
+    
+    /**
+     * Track page view event
+     * @param {string} pageName - Name of the page being viewed
+     */
+    function trackPageView(pageName) {
+        gtag('event', 'page_view', {
+            page_title: pageName,
+            page_location: window.location.href,
+            page_path: `/${pageName}`,
+            custom_parameter_1: userPreferences.userType,
+            custom_parameter_2: userPreferences.loyaltyTier
+        });
+    }
+    
+    // ====================== GA4 E-COMMERCE EVENTS ======================
+    
+    /**
+     * Track view_item_list event when products section is visible
+     * This fires when the products section comes into view
+     */
+    function trackViewItemList() {
+        const items = Array.from(document.querySelectorAll('.product-card')).map((card, index) => {
+            const product = JSON.parse(card.dataset.product);
+            return {
+                item_id: product.item_id,
+                item_name: product.item_name,
+                item_brand: product.item_brand,
+                item_category: product.item_category,
+                item_category2: product.item_category2,
+                item_category3: product.item_category3,
+                item_variant: product.item_variant,
+                price: product.price,
+                quantity: 1,
+                affiliation: product.affiliation,
+                coupon: product.coupon,
+                discount: product.discount,
+                item_list_id: product.item_list_id,
+                item_list_name: product.item_list_name,
+                index: index
+            };
+        });
 
-    const cartSec = $('#cart');
-    if(cartSec) cartObserver.observe(cartSec);
+        gtag('event', 'view_item_list', {
+            item_list_id: 'featured_products',
+            item_list_name: 'Featured Products',
+            items: items
+        });
+    }
+    
+    /**
+     * Track view_item event when a product is viewed
+     * @param {Object} product - Product data
+     */
+    function trackViewItem(product) {
+        gtag('event', 'view_item', {
+            currency: product.currency,
+            value: product.price,
+            items: [{
+                item_id: product.item_id,
+                item_name: product.item_name,
+                item_brand: product.item_brand,
+                item_category: product.item_category,
+                item_category2: product.item_category2,
+                item_category3: product.item_category3,
+                item_variant: product.item_variant,
+                price: product.price,
+                quantity: 1,
+                affiliation: product.affiliation,
+                coupon: product.coupon,
+                discount: product.discount
+            }]
+        });
+    }
+    
+    /**
+     * Track select_item event when a product is selected
+     * @param {Object} product - Product data
+     */
+    function trackSelectItem(product) {
+        gtag('event', 'select_item', {
+            item_list_id: 'featured_products',
+            item_list_name: 'Featured Products',
+            items: [{
+                item_id: product.item_id,
+                item_name: product.item_name,
+                item_brand: product.item_brand,
+                item_category: product.item_category,
+                item_category2: product.item_category2,
+                item_category3: product.item_category3,
+                item_variant: product.item_variant,
+                price: product.price,
+                quantity: 1,
+                affiliation: product.affiliation,
+                coupon: product.coupon,
+                discount: product.discount,
+                item_list_id: product.item_list_id,
+                item_list_name: product.item_list_name,
+                index: product.index
+            }]
+        });
+    }
+    
+    /**
+     * Track add_to_cart event
+     * @param {Object} product - Product being added
+     * @param {number} quantity - Quantity being added
+     */
+    function trackAddToCart(product, quantity) {
+        const value = product.price * quantity;
+        const items = [{
+            item_id: product.item_id,
+            item_name: product.item_name,
+            item_brand: product.item_brand,
+            item_category: product.item_category,
+            item_category2: product.item_category2,
+            item_category3: product.item_category3,
+            item_variant: product.item_variant,
+            price: product.price,
+            quantity: quantity,
+            affiliation: product.affiliation,
+            coupon: product.coupon,
+            discount: product.discount
+        }];
 
-    /* 4. PROCEED TO CHECKOUT → add_shipping_info */
-    $('#proceed-checkout').addEventListener('click', ()=>{
-        const items = cart.map(i=>({...i}));
-        const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+        gtag('event', 'add_to_cart', {
+            currency: product.currency,
+            value: value,
+            items: items
+        });
+    }
+    
+    /**
+     * Track remove_from_cart event
+     * @param {Object} product - Product being removed
+     * @param {number} quantity - Quantity being removed
+     */
+    function trackRemoveFromCart(product, quantity) {
+        const value = product.price * quantity;
+        const items = [{
+            item_id: product.item_id,
+            item_name: product.item_name,
+            item_brand: product.item_brand,
+            item_category: product.item_category,
+            item_category2: product.item_category2,
+            item_category3: product.item_category3,
+            item_variant: product.item_variant,
+            price: product.price,
+            quantity: quantity,
+            affiliation: product.affiliation,
+            coupon: product.coupon,
+            discount: product.discount
+        }];
+
+        gtag('event', 'remove_from_cart', {
+            currency: product.currency,
+            value: value,
+            items: items
+        });
+    }
+    
+    /**
+     * Track view_cart event when cart section is visible
+     */
+    function trackViewCart() {
+        if (cart.length === 0) return;
+        
+        const items = cart.map(item => ({
+            item_id: item.item_id,
+            item_name: item.item_name,
+            item_brand: item.item_brand,
+            item_category: item.item_category,
+            item_category2: item.item_category2,
+            item_category3: item.item_category3,
+            item_variant: item.item_variant,
+            price: item.price,
+            quantity: item.quantity,
+            affiliation: item.affiliation,
+            coupon: item.coupon,
+            discount: item.discount
+        }));
+        
+        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        gtag('event', 'view_cart', {
+            currency: userPreferences.currency,
+            value: value,
+            items: items
+        });
+    }
+    
+    /**
+     * Track begin_checkout event
+     */
+    function trackBeginCheckout() {
+        const items = cart.map(item => ({
+            item_id: item.item_id,
+            item_name: item.item_name,
+            item_brand: item.item_brand,
+            item_category: item.item_category,
+            item_category2: item.item_category2,
+            item_category3: item.item_category3,
+            item_variant: item.item_variant,
+            price: item.price,
+            quantity: item.quantity,
+            affiliation: item.affiliation,
+            coupon: item.coupon,
+            discount: item.discount
+        }));
+        
+        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        gtag('event', 'begin_checkout', {
+            currency: userPreferences.currency,
+            value: value,
+            items: items
+        });
+    }
+    
+    /**
+     * Track add_shipping_info event
+     */
+    function trackAddShippingInfo() {
+        const items = cart.map(item => ({
+            item_id: item.item_id,
+            item_name: item.item_name,
+            item_brand: item.item_brand,
+            item_category: item.item_category,
+            item_category2: item.item_category2,
+            item_category3: item.item_category3,
+            item_variant: item.item_variant,
+            price: item.price,
+            quantity: item.quantity,
+            affiliation: item.affiliation,
+            coupon: item.coupon,
+            discount: item.discount
+        }));
+        
+        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
         gtag('event', 'add_shipping_info', {
-            currency: 'EUR',
-            value,
+            currency: userPreferences.currency,
+            value: value,
             shipping_tier: 'Standard Ground',
-            items
+            items: items
         });
+    }
+    
+    /**
+     * Track add_payment_info event
+     */
+    function trackAddPaymentInfo() {
+        const items = cart.map(item => ({
+            item_id: item.item_id,
+            item_name: item.item_name,
+            item_brand: item.item_brand,
+            item_category: item.item_category,
+            item_category2: item.item_category2,
+            item_category3: item.item_category3,
+            item_variant: item.item_variant,
+            price: item.price,
+            quantity: item.quantity,
+            affiliation: item.affiliation,
+            coupon: item.coupon,
+            discount: item.discount
+        }));
+        
+        const value = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        dataLayer.push({
-            event: 'add_shipping_info',
-            ecommerce: { currency:'EUR', value, shipping_tier:'Standard Ground', items }
+        gtag('event', 'add_payment_info', {
+            currency: userPreferences.currency,
+            value: value,
+            payment_type: 'Credit Card',
+            items: items
         });
-
-        navigateTo('checkout');
-    });
-
-    /* 5. PURCHASE */
-    $('#purchase').addEventListener('click', ()=>{
-        if(!$('#firstName').value || !$('#lastName').value || !$('#country').value){
-            alert('Please fill all fields');
-            return;
-        }
-
-        const transaction_id = 'T_' + Date.now();
-        const value = cart.reduce((s,i)=>s+i.price*i.quantity,0);
-        const items = cart.map(i=>({...i}));
+    }
+    
+    /**
+     * Track purchase event
+     * @param {string} transactionId - Unique transaction ID
+     */
+    function trackPurchase(transactionId) {
+        const items = cart.map(item => ({
+            item_id: item.item_id,
+            item_name: item.item_name,
+            item_brand: item.item_brand,
+            item_category: item.item_category,
+            item_category2: item.item_category2,
+            item_category3: item.item_category3,
+            item_variant: item.item_variant,
+            price: item.price,
+            quantity: item.quantity,
+            affiliation: item.affiliation,
+            coupon: item.coupon,
+            discount: item.discount
+        }));
+        
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = 9.99;
+        const tax = subtotal * 0.08; // 8% tax
+        const total = subtotal + shipping + tax;
 
         gtag('event', 'purchase', {
-            transaction_id,
-            value,
-            tax: 0,
-            shipping: 0,
-            currency: 'EUR',
-            items
+            transaction_id: transactionId,
+            currency: userPreferences.currency,
+            value: total,
+            tax: tax,
+            shipping: shipping,
+            items: items
         });
-
-        dataLayer.push({
-            event: 'purchase',
-            ecommerce: { transaction_id, value, currency:'EUR', items }
+    }
+    
+    /**
+     * Track refund event
+     * @param {string} transactionId - Transaction ID being refunded
+     * @param {Array} items - Items being refunded
+     * @param {number} value - Refund value
+     */
+    function trackRefund(transactionId, items, value) {
+        gtag('event', 'refund', {
+            currency: userPreferences.currency,
+            transaction_id: transactionId,
+            value: value,
+            items: items
         });
-
-        $('#order-details').innerHTML = `
-            <p><strong>Order:</strong> ${transaction_id}</p>
-            <p><strong>Total:</strong> €${value.toFixed(2)}</p>
-            <p>Thank you, ${$('#firstName').value}!</p>
-        `;
-
-        cart.length = 0;
-        updateCart();
-        navigateTo('thankyou');
-    });
-
-    /* 6. NEWSLETTER */
-    $('#subscribe').addEventListener('click', ()=>{
-        const email = $('#newsletter-email').value.trim();
-        if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            alert('Valid email required');
+    }
+    
+    /**
+     * Track view_promotion event
+     * @param {Object} promotion - Promotion data
+     */
+    function trackViewPromotion(promotion) {
+        gtag('event', 'view_promotion', {
+            creative_name: promotion.creative_name,
+            creative_slot: promotion.creative_slot,
+            promotion_id: promotion.promotion_id,
+            promotion_name: promotion.promotion_name,
+            items: promotion.items
+        });
+    }
+    
+    /**
+     * Track select_promotion event
+     * @param {Object} promotion - Promotion data
+     */
+    function trackSelectPromotion(promotion) {
+        gtag('event', 'select_promotion', {
+            creative_name: promotion.creative_name,
+            creative_slot: promotion.creative_slot,
+            promotion_id: promotion.promotion_id,
+            promotion_name: promotion.promotion_name,
+            items: promotion.items
+        });
+    }
+    
+    /**
+     * Track generate_lead event for newsletter signup
+     * @param {string} email - User's email address
+     */
+    function trackGenerateLead(email) {
+        gtag('event', 'generate_lead', {
+            currency: userPreferences.currency,
+            value: 1,
+            lead_type: 'newsletter_signup',
+            email: email
+        });
+    }
+    
+    /**
+     * Track search event
+     * @param {string} searchTerm - Search term used
+     */
+    function trackSearch(searchTerm) {
+        gtag('event', 'search', {
+            search_term: searchTerm
+        });
+    }
+    
+    // ====================== CART MANAGEMENT ======================
+    
+    /**
+     * Add product to cart
+     * @param {HTMLElement} button - Add to cart button element
+     */
+    function addToCart(button) {
+        const productCard = button.closest('.product-card');
+        if (!productCard) {
+            console.error('Product card not found');
             return;
         }
-        gtag('event', 'generate_lead', { value:1, currency:'EUR' });
-        dataLayer.push({ event: 'newsletter_signup', email });
-        $('#newsletter-email').value='';
-        alert('Subscribed!');
-    });
+        
+        const product = JSON.parse(productCard.dataset.product);
+        console.log('Adding product to cart:', product);
+        
+        // Track select_item event
+        trackSelectItem(product);
+        
+        // Track view_item event
+        trackViewItem(product);
+        
+        // Add to cart
+        const existingItem = cart.find(item => item.item_id === product.item_id);
+        const quantity = existingItem ? existingItem.quantity + 1 : 1;
+        
+        if (existingItem) {
+            existingItem.quantity = quantity;
+        } else {
+            cart.push({ ...product, quantity: quantity });
+        }
+        
+        console.log('Cart after adding item:', cart);
+        
+        // Track add_to_cart event
+        trackAddToCart(product, 1);
+        
+        // Update cart display
+        updateCartDisplay();
+        updateCartCount();
+        
+        // Show success feedback
+        showNotification(`${product.item_name} added to cart!`, 'success');
+    }
+    
+    /**
+     * Remove product from cart
+     * @param {string} itemId - ID of item to remove
+     */
+    function removeFromCart(itemId) {
+        const item = cart.find(i => i.item_id === itemId);
+        if (!item) return;
 
-    /* INIT */
-    showSection('landing');
-    history.replaceState({section:'landing'},'','#landing');
-});
-</script>
+        trackRemoveFromCart(item, item.quantity);
+        cart.splice(cart.indexOf(item), 1);
+        updateCartDisplay();
+        updateCartCount();
+        
+        showNotification(`${item.item_name} removed from cart`, 'info');
+    }
+    
+    // Make functions globally accessible
+    window.addToCart = addToCart;
+    window.removeFromCart = removeFromCart;
+    window.updateCartQuantity = updateCartQuantity;
+    window.navigateTo = navigateTo;
+    window.closePromotion = closePromotion;
+    
+    /**
+     * Update item quantity in cart
+     * @param {string} itemId - ID of item to update
+     * @param {number} newQuantity - New quantity
+     */
+    function updateCartQuantity(itemId, newQuantity) {
+        const item = cart.find(i => i.item_id === itemId);
+        if (!item) return;
+        
+        const oldQuantity = item.quantity;
+        item.quantity = Math.max(1, newQuantity);
+        
+        // Track quantity changes
+        if (oldQuantity !== item.quantity) {
+            const diff = item.quantity - oldQuantity;
+            if (diff > 0) {
+                trackAddToCart(item, diff);
+            } else {
+                trackRemoveFromCart(item, Math.abs(diff));
+            }
+        }
+        
+        updateCartDisplay();
+    }
+    
+    /**
+     * Update cart display
+     */
+    function updateCartDisplay() {
+        const cartItems = $('#cart-items');
+        const cartSummary = $('#cart-summary');
+        
+        if (!cartItems) {
+            console.warn('Cart items container not found - cart may not be visible yet');
+            return;
+        }
+        
+        console.log('Updating cart display. Cart length:', cart.length);
+        
+        if (cart.length === 0) {
+            cartItems.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
+                    <h3>Your cart is empty</h3>
+                    <button class="cta-button" onclick="navigateTo('products')">
+                        Continue Shopping
+                    </button>
+                </div>
+            `;
+            if (cartSummary) cartSummary.style.display = 'none';
+            return;
+        }
+        
+        // Calculate totals
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = subtotal;
+        
+        // Update cart items
+        const cartHTML = cart.map(item => `
+            <div class="cart-item">
+                <div class="item-details">
+                    <h4>${item.item_name}</h4>
+                    <p class="item-brand">${item.item_brand}</p>
+                    <div class="item-price">€${item.price.toFixed(2)} each</div>
+                </div>
+                <div class="item-controls">
+                    <div class="quantity-controls">
+                        <button onclick="updateCartQuantity('${item.item_id}', ${item.quantity - 1})" 
+                                class="qty-btn" ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                        <span class="quantity">${item.quantity}</span>
+                        <button onclick="updateCartQuantity('${item.item_id}', ${item.quantity + 1})" 
+                                class="qty-btn">+</button>
+                    </div>
+                    <button onclick="removeFromCart('${item.item_id}')" class="remove-btn">
+                        Remove
+                    </button>
+                </div>
+                <div class="item-total">
+                    €${(item.price * item.quantity).toFixed(2)}
+                </div>
+            </div>
+        `).join('');
+        
+        console.log('Cart HTML:', cartHTML);
+        cartItems.innerHTML = cartHTML;
+        
+        // Update summary
+        if (cartSummary) {
+            cartSummary.style.display = 'block';
+            const subtotalEl = $('#cart-subtotal');
+            const totalEl = $('#cart-total');
+            
+            if (subtotalEl) subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+            if (totalEl) totalEl.textContent = `€${total.toFixed(2)}`;
+        }
+    }
+    
+    /**
+     * Update cart count in header
+     */
+    function updateCartCount() {
+        const cartCount = $('#cart-count');
+        if (cartCount) {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            cartCount.style.display = totalItems > 0 ? 'inline' : 'none';
+        } else {
+            console.warn('Cart count element not found - header may not be ready yet');
+        }
+    }
+    
+    /**
+     * Get emoji for product category
+     * @param {string} category - Product category
+     * @returns {string} - Emoji for category
+     */
+    function getProductEmoji(category) {
+        const emojis = {
+            'Smartphones': '📱',
+            'Laptops': '💻',
+            'Accessories': '🎧',
+            'Tablets': '📱',
+            'Wearables': '⌚'
+        };
+        return emojis[category] || '📦';
+    }
+    
+    // ====================== CHECKOUT PROCESS ======================
+    
+    /**
+     * Proceed to checkout
+     */
+    function proceedToCheckout() {
+        if (cart.length === 0) {
+            showNotification('Your cart is empty!', 'warning');
+            return;
+        }
+        
+        trackBeginCheckout();
+        navigateTo('checkout');
+        updateCheckoutDisplay();
+    }
+    
+    /**
+     * Update checkout display
+     */
+    function updateCheckoutDisplay() {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = subtotal;
+        
+        // Update totals
+        const totalEl = $('#checkout-final-total');
+        
+        if (totalEl) totalEl.textContent = `€${total.toFixed(2)}`;
+    }
+    
+    /**
+     * Handle checkout form submission
+     */
+    function handleCheckoutSubmit(event) {
+        event.preventDefault();
+        
+        // Validate form
+        if (!validateCheckoutForm()) {
+            return;
+        }
+        
+        // Track shipping info
+        trackAddShippingInfo();
+        
+        // Track payment info
+        trackAddPaymentInfo();
+        
+        // Generate transaction ID
+        const transactionId = 'TXN_' + Date.now();
+        
+        // Track purchase
+        trackPurchase(transactionId);
+        
+        // Show order confirmation
+        showOrderConfirmation(transactionId);
+        
+        // Clear cart
+        cart.length = 0;
+        updateCartDisplay();
+        updateCartCount();
+        
+        // Reset form
+        event.target.reset();
+    }
+    
+    /**
+     * Validate checkout form
+     * @returns {boolean} - True if form is valid
+     */
+    function validateCheckoutForm() {
+        const requiredFields = [
+            'first-name', 'last-name', 'email', 'address', 'city', 'zip'
+        ];
+        
+        const missingFields = requiredFields.filter(fieldId => {
+            const field = $(fieldId);
+            return !field || !field.value.trim();
+        });
+        
+        if (missingFields.length > 0) {
+            showNotification(`Please fill in all required fields: ${missingFields.join(', ')}`, 'error');
+            return false;
+        }
+        
+        // Validate email
+        const email = $('#email').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Show order confirmation
+     * @param {string} transactionId - Transaction ID
+     */
+    function showOrderConfirmation(transactionId) {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = subtotal;
+        
+        const orderDetails = $('#order-details');
+        if (orderDetails) {
+            orderDetails.innerHTML = `
+                <div class="order-info">
+                    <h3>Order Details</h3>
+                    <p><strong>Order ID:</strong> ${transactionId}</p>
+                    <p><strong>Total:</strong> €${total.toFixed(2)}</p>
+                    <p><strong>Items:</strong> ${cart.length} products</p>
+                    <p><strong>Customer:</strong> ${$('#first-name').value} ${$('#last-name').value}</p>
+                    <p><strong>Email:</strong> ${$('#email').value}</p>
+                    <p><strong>Shipping to:</strong> ${$('#city').value}, ${$('#zip').value}</p>
+                </div>
+            `;
+        }
+        
+        navigateTo('order-confirmation');
+    }
+    
+    // ====================== NEWSLETTER FUNCTIONALITY ======================
+    
+    /**
+     * Handle newsletter subscription
+     */
+    function handleNewsletterSubmit(event) {
+        event.preventDefault();
+        
+        const email = $('#newsletter-email').value.trim();
+        if (!email || !validateEmail(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Track lead generation
+        trackGenerateLead(email);
+        
+        // Clear form
+        $('#newsletter-email').value = '';
+        
+        showNotification('Thank you for subscribing! You will receive updates soon.', 'success');
+    }
+    
+    /**
+     * Validate email format
+     * @param {string} email - Email to validate
+     * @returns {boolean} - True if email is valid
+     */
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    // ====================== PROMOTION TRACKING ======================
+    
+    /**
+     * Track promotion view
+     */
+    function trackPromotionView() {
+        const promotion = {
+            creative_name: 'Summer Sale Banner',
+            creative_slot: 'header_banner',
+            promotion_id: 'SUMMER_SALE_2024',
+            promotion_name: 'Summer Sale - Up to 50% Off',
+            items: cart.map(item => ({
+                item_id: item.item_id,
+                item_name: item.item_name,
+                item_brand: item.item_brand,
+                item_category: item.item_category,
+                price: item.price,
+                quantity: item.quantity
+            }))
+        };
+        
+        trackViewPromotion(promotion);
+    }
+    
+    /**
+     * Close promotion banner
+     */
+    function closePromotion() {
+        const banner = $('#promotion-banner');
+        if (banner) {
+            banner.style.display = 'none';
+        }
+    }
+    
+    // ====================== PRODUCT FILTERING ======================
+    
+    /**
+     * Filter products by category
+     * @param {string} category - Category to filter by
+     */
+    function filterProducts(category) {
+        const products = document.querySelectorAll('.product-card');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        // Update active filter button
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.category === category) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Filter products
+        products.forEach(product => {
+            const productCategory = JSON.parse(product.dataset.product).item_category.toLowerCase();
+            if (category === 'all' || productCategory.includes(category.toLowerCase())) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+        
+        // Track search/filter event
+        trackSearch(category === 'all' ? 'all products' : category);
+    }
+    
+    // ====================== NOTIFICATION SYSTEM ======================
+    
+    /**
+     * Show notification to user
+     * @param {string} message - Notification message
+     * @param {string} type - Notification type (success, error, warning, info)
+     */
+    function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-message">${message}</span>
+                <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+    
+    // ====================== INITIALIZATION ======================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Navigation event listeners
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetSection = this.getAttribute('href').slice(1);
+                navigateTo(targetSection);
+            });
+        });
+        
+        // Product filter event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterProducts(this.dataset.category);
+            });
+        });
+        
+        // Product card click handlers for view_item tracking
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('add-to-cart-btn')) {
+                    const product = JSON.parse(this.dataset.product);
+                    trackViewItem(product);
+                }
+            });
+        });
+        
+        // Intersection Observer for view_item_list tracking
+        const productObserver = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) {
+                trackViewItemList();
+                productObserver.unobserve(entries[0].target);
+            }
+        }, { threshold: 0.3 });
+        
+        const productsSection = $('#products');
+        if (productsSection) {
+            productObserver.observe(productsSection);
+        }
+        
+        // Cart view tracking
+        const cartObserver = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting && cart.length > 0) {
+                trackViewCart();
+                cartObserver.unobserve(entries[0].target);
+            }
+        }, { threshold: 0.5 });
+        
+        const cartSection = $('#cart');
+        if (cartSection) {
+            cartObserver.observe(cartSection);
+        }
+        
+        // Promotion view tracking
+        const promotionObserver = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) {
+                trackPromotionView();
+                promotionObserver.unobserve(entries[0].target);
+            }
+        }, { threshold: 0.5 });
+        
+        const promotionBanner = $('#promotion-banner');
+        if (promotionBanner) {
+            promotionObserver.observe(promotionBanner);
+        }
+        
+        // Form event listeners
+        const checkoutForm = $('#checkout-form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', handleCheckoutSubmit);
+        }
+        
+        const newsletterForm = $('#newsletter-form');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', handleNewsletterSubmit);
+        }
+        
+        // Show home section by default
+        const homeSection = $('#home');
+        if (homeSection) {
+            homeSection.style.display = 'block';
+            homeSection.classList.add('active');
+        }
+        
+        // Initialize cart display
+        updateCartDisplay();
+        updateCartCount();
+        
+        // Track initial page view
+        trackPageView('home');
+    });
+    </script>
 </body>
 </html>
